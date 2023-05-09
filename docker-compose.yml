@@ -1,0 +1,68 @@
+# cp from barge-packer//qemu
+# docker run --privileged \
+#     -v $(pwd)/run:/var/run/libvirt \
+#     -v $(pwd)/var:/var/lib/libvirt \
+#     ghcr.io/speedy37/docker-libvirtd/libvirtd:main
+# version: '2.4' #dcp-v2.29.7: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion
+services:
+  virter:
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/barge-build-compiler-ubt1604:qemu #latest
+    # image: ghcr.io/speedy37/docker-libvirtd/libvirtd:main
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:latest
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501
+    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-alpine319
+    # command: /srv/local/k3s/entry.sh
+    entrypoint: /bin/bash /srv/local/libvirt/build/entry.sh
+    restart: unless-stopped
+    privileged: true
+    network_mode: host #host #bridge
+    working_dir: /srv/local/libvirt
+    # healthcheck:
+    #   test: ["CMD", "bash", "-c", "supervisorctl status |grep -v 'RUNNING' && exit 1 || exit 0 "]
+    # environment:
+    #   - K3S_KUBECONFIG_OUTPUT=/srv/local/k3s/kubeconfig.yaml
+    # extra_hosts:
+    #   - "server.k8s.local:${SERVER_IP:-172.25.23.194}" #tenct-lan
+    tmpfs:
+      - /var/run
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - ./:/srv/local/libvirt
+      # - /var/lib/libvirt:/var/lib/libvirt
+      # - /run/libvirt:/var/run/libvirt ## pve-deb10: /var/run -> /run/
+      - ./var-lib-libvirt:/var/lib/libvirt
+      - ./var-run-libvirt:/var/run/libvirt
+      - /_ext:/_ext
+      # - ./supervisord.conf:/etc/supervisord.conf
+      # - /sys/fs/cgroup:/sys/fs/cgroup 
+
+
+  # https://github.com/m-bers/docker-virt-manager
+  virt-manager:
+    # image: mber5/virt-manager:latest
+    image: registry.cn-shenzhen.aliyuncs.com/infrasync/mber5-virt-manager:latest #x64,arm64
+    restart: always
+    ports:
+      - 8185:80
+    environment:
+      # Set DARK_MODE to true to enable dark mode
+      - DARK_MODE=false #for dcp-v1.23
+      # Set HOSTS: "['qemu:///session']" to connect to a user session
+      - HOSTS="['qemu:///system']"
+      # - TZ=Asia/Shanghai #ref x11-base
+      # If on an Ubuntu host (or any host with the libvirt AppArmor policy,
+      # you will need to use an ssh connection to localhost
+      # or use qemu:///system and uncomment the below line
+
+    # privileged: true
+    volumes:
+      # - "/var/run/libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock"
+      # - "/var/lib/libvirt/images:/var/lib/libvirt/images"
+      # - "./var-run-libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock"
+      # - "./var-lib-libvirt/images:/var/lib/libvirt/images"
+      - ./var-lib-libvirt:/var/lib/libvirt
+      - ./var-run-libvirt:/var/run/libvirt
+    # devices:
+    #   - "/dev/kvm:/dev/kvm"
