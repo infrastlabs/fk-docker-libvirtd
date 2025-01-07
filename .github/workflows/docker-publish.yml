@@ -1,83 +1,53 @@
-name: Docker
-
+# ref docker-registry; _ee\build-nginx\.github\workflows\docker-build.yaml
+name: "Build and push Docker image"
 on:
-  # Auto update every week
-  schedule:
-    - cron: "30 2 * * 1"
-
   push:
-    # Publish `main` as Docker `latest` image.
-    branches:
-      - main
-
-    # Publish `v1.2.3` tags as releases.
-    tags:
-      - v*
-
-  # Run tests for any PRs.
-  pull_request:
-
-env:
-  IMAGE_NAME: libvirtd
-
+    branches: ["*"]
+    tags: ["*"]
+  # schedule:
+  #   - cron: "0 0 * * 0"
 jobs:
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
-    runs-on: ubuntu-latest
-
+  main:
+    runs-on: "ubuntu-20.04"
     steps:
-      - uses: actions/checkout@v2
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+      
+      - name: Setup QEMU
+        # uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2 #ref docker-baseimage-gui
+        with:
+          platforms: arm,arm64,ppc64le,mips64,s390x
 
-      - name: Run tests
+      - name: Setup Docker Buildx
+        # uses: docker/setup-buildx-action@
+        uses: docker/setup-buildx-action@v2
+        with:
+          driver-opts: network=host
+
+      - name: Call buildx.sh(build with ali's cache, push)
         run: |
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
-            docker-compose --file docker-compose.test.yml run sut
-          else
-            docker build . --file Dockerfile
-          fi
-
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
-  push:
-    # Ensure test job passes before pushing image.
-    needs: test
-
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build image
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME
-
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Push image
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME
-
-          # Change all uppercase to lowercase
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+          # VARS
+          echo ${{ github.repository_owner }} #infrastlabs
+          echo ${{ github.repository }}
+          echo ${{ secrets.DOCKER_REGISTRY_PW_DOCKERHUB }} #fill not show in log
+          # INFO
+          pwd && ls -l
+          docker version
+          free -h; df -h; ip a |grep inet; uname -a;
+          docker image prune -a -f; df -h
+          
+          # ENV
+          # registry-1.docker.io| noneView
+          export DOCKER_REGISTRY_USER_dockerhub=${{ secrets.DOCKER_REGISTRY_USER_DOCKERHUB }}
+          export DOCKER_REGISTRY_PW_dockerhub=${{ secrets.DOCKER_REGISTRY_PW_DOCKERHUB }}
+          # ali's| size, none-arch, layers;
+          export DOCKER_REGISTRY_USER_infrastSubUser2=${{ secrets.DOCKER_REGISTRY_USER_INFRASTSUBUSER2 }}
+          export DOCKER_REGISTRY_PW_infrastSubUser2=${{ secrets.DOCKER_REGISTRY_PW_INFRASTSUBUSER2 }}
+          
+          export REPO_HUB=registry-1.docker.io
+          export REPO_ALI=registry.cn-shenzhen.aliyuncs.com
+          export REPO=$REPO_ALI #REPO_HUB REPO_ALI ##without "xx/"
+          
+          echo doBuild; doBuild=true
+          test "true" == "$doBuild" && bash build/buildx.sh #nginx
