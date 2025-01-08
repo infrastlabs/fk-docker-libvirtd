@@ -1,13 +1,17 @@
 # FROM alpine
-FROM registry.cn-shenzhen.aliyuncs.com/infrasync/library-alpine:3.13.12
+# 3.13.12> 3.19
+FROM registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501 as virter-alpine313
+FROM registry.cn-shenzhen.aliyuncs.com/infrasync/library-alpine:3.19
 ARG TARGETPLATFORM
 RUN domain="mirrors.tuna.tsinghua.edu.cn"; \
-  echo "http://$domain/alpine/v3.13/main" > /etc/apk/repositories; \
-  echo "http://$domain/alpine/v3.13/community" >> /etc/apk/repositories
+  echo "http://$domain/alpine/v3.19/main" > /etc/apk/repositories; \
+  echo "http://$domain/alpine/v3.19/community" >> /etc/apk/repositories
+  # echo "http://$domain/alpine/edge/testing" >> /etc/apk/repositories;
   # seabios \ #none @arm64 [3.13/3.19]
+  # edk2 ovmf \ #ovmf已有, edk2非必须
+  # ovmf \ #v3.19 none
 RUN apk add --no-cache \
     supervisor \
-    ovmf \
     libvirt-client \
     libvirt-daemon \
     libvirt-common-drivers \
@@ -45,19 +49,35 @@ RUN apk add --no-cache \
   dropbear openssh-sftp-server openssh-client \
   libevent ncurses openssl
 
-# ohmybash: font> axin(badColorView@alpine3.13)
-RUN sh -c "$(wget https://gitee.com/g-system/oh-my-bash/raw/sam-custom/tools/install.sh -O -)"
+# ohmybash: font> axin(badColorView@alpine3.13) >> axin-viewOK @3.13.12;
+RUN \
+  sh -c "$(wget https://gitee.com/g-system/oh-my-bash/raw/sam-custom/tools/install.sh -O -)"; \
+  sed -i 's/OSH_THEME.*/OSH_THEME="axin"/g' /root/.bashrc; cat /root/.bashrc |grep axin; 
 
 # tini,gosu
 # https://github.com/krallin/tini/releases/download/v0.19.0/tini-static-muslc-amd64
 # https://github.com/tianon/gosu/releases/download/1.11/gosu-$arch
 
 # virter-v0.24.0
-RUN file=virter-linux-amd64; \
+RUN \
+  case ${TARGETPLATFORM} in \
+    "linux/amd64")  arch=amd64    ;; \
+    "linux/arm64")  arch=arm64    ;; \
+    "linux/arm/v7") arch=arm      ;; \
+    "linux/arm/v6") arch=NONE_armel ;; \
+    "linux/386")    arch=NONE_i386  ;; \
+  esac; \
+  file=virter-linux-$arch; \
   # curl -O -fSL https://ghproxy.com/https://github.com/LINBIT/virter/releases/download/v0.24.0/$file
   # https://github.com/LINBIT/virter/releases/download/v0.28.1/virter-linux-amd64 ##amd64 only
   # https://ghproxy.com/>> https://ghgo.xyz
-  test -s $file || wget -O $file https://github.com/LINBIT/virter/releases/download/v0.28.1/$file; \
+  # 
+  # https://gitee.com/g-golang/fk-virter/releases/download/v25.01-2/virter-v2501-250108-linux-amd64.tar.gz
+  # test -s $file || wget -O $file.tar.gz https://gitee.com/g-golang/fk-virter/releases/download/v25.01-2/virter-v2501-250108-linux-$arch.tar.gz; \
+  # tar -zxf $file.tar.gz; mv $file /bin/virter;
+  # 
+  # https://github.com/infrastlabs/fk-virter/releases/download/v24.12/virter-linux-amd64 #none: xx-upx.tar.gz (err@23.2-kylin)
+  test -s $file || wget -O $file https://github.com/infrastlabs/fk-virter/releases/download/v24.12/$file; \
   chmod +x $file; mv $file /bin/virter;
 
 RUN \
@@ -82,6 +102,8 @@ ENV \
   # SSHD_ENABLE=true \
   SSHD_PORT=60022
 
+  
+COPY --from=virter-alpine313 /usr/share/qemu/edk2-arm-vars.fd /usr/share/qemu/edk2-arm-vars.fd
 # .profile> .bashrc> ohmybash (for: ssh_dropbear)
 # ADD ./dot/.profile /root/.profile
 ADD ./dot/ /root/
