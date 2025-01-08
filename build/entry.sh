@@ -1,43 +1,45 @@
 #!/bin/bash
-cur=$(cd "$(dirname "$0")"; pwd)
+cur=$(dirname $(readlink -f "$0"))
 cd $cur
 
 function init() {
-# file=virter-linux-amd64 @inner-image
-# # curl -O -fSL https://ghproxy.com/https://github.com/LINBIT/virter/releases/download/v0.24.0/$file
-# test -s $file || wget -O $file https://ghproxy.com/https://github.com/LINBIT/virter/releases/download/v0.24.0/$file
-# chmod +x $file; test -s /bin/virter || \cp -a $file /bin/virter
+  # bin,etc,usr,dot
+  chmod +x bin/*.sh; \cp -a bin/* /bin/
+  \cp -a etc/* /etc/
+  \cp -a usr/* /usr/
+  \cp -a dot/. /root/; chmod 600 /root/.ssh/id_rsa*; #virter.toml
+  dst=/root/.local/share/virter; mkdir -p $dst; : > $dst/images.toml #clear org's img-list
 
-file=vm.sh;      \cp -a $cur/bin/$file /bin/$file; chmod +x /bin/$file
-file=sethost.sh; \cp -a $cur/bin/$file /bin/$file; chmod +x /bin/$file
-rm -f /bin/vt; ln -s /bin/virter /bin/vt
-rm -f /bin/sv; ln -s /usr/bin/supervisorctl /bin/sv
-# virter completion bash |sed 's^virter^vt^g'
-match0=$(cat /root/.bashrc |grep "virter completion bash")
-test -z "$match0" && echo "source <(virter completion bash |sed 's^virter^vt^g')" >> /root/.bashrc 
+  # virter completion bash |sed 's^virter^vt^g'
+  match0=$(cat /root/.bashrc |grep "virter completion bash")
+  test -z "$match0" && echo "source <(virter completion bash |sed 's^virter^vt^g')" >> /root/.bashrc 
 
-# pre-conf
-# mkdir -p /root/.config/virter /root/.local/share/virter
-# \cp -a dot/share/images.toml /root/.local/share/virter/
-# \cp -a dot/conf/* /root/.config/virter/; chmod 600 /root/.config/virter/id_rsa*; #virter.toml
-# mkdir -p /var/lib/libvirt/images /root/.ssh
-# \cp -a /root/.config/virter/id_rsa /root/.ssh/ #ssh bargee@xxx
-\cp -a dot/. /root/; chmod 600 /root/.ssh/id_rsa*; #virter.toml
+  # ssh| StrictHostKeyChecking no
+  sed -i "s/.*StrictHostKeyChecking.*/StrictHostKeyChecking no/g" /etc/ssh/ssh_config
+  sed -i "s^.*UserKnownHostsFile.*^UserKnownHostsFile /dev/null^g" /etc/ssh/ssh_config
+  cat /etc/ssh/ssh_config |egrep "Stri|UserKnownHostsFile"
 
-# StrictHostKeyChecking no
-sed -i "s/.*StrictHostKeyChecking.*/StrictHostKeyChecking no/g" /etc/ssh/ssh_config
-sed -i "s^.*UserKnownHostsFile.*^UserKnownHostsFile /dev/null^g" /etc/ssh/ssh_config
-cat /etc/ssh/ssh_config |egrep "Stri|UserKnownHostsFile"
+  # .bashrc
+  sed -i 's/OSH_THEME.*/OSH_THEME="axin"/g' /root/.bashrc; cat /root/.bashrc |grep axin
 
-# links
-mkdir -p /var/lib/libvirt/images
-rm -f images; ln -s /var/lib/libvirt/images images
-# rm -f conf; ln -s /root/.config/virter conf
-# rm -f share; ln -s /root/.local/share/virter share
+  # links
+  rm -f /bin/vt; ln -s /bin/virter /bin/vt
+  rm -f /bin/sv; ln -s /usr/bin/supervisorctl /bin/sv
+  mkdir -p /var/lib/libvirt/images
+  rm -f images; ln -s /var/lib/libvirt/images images
+  # rm -f conf; ln -s /root/.config/virter conf
+  # rm -f share; ln -s /root/.local/share/virter share
 
-# virbr https://blog.csdn.net/hffwj/article/details/122322682
-ifconfig virbr0 down
-brctl delbr virbr0
+  # virbr https://blog.csdn.net/hffwj/article/details/122322682
+  ifconfig virbr0 down
+  brctl delbr virbr0
+
+
+  # ohos-docker.kvm:
+  # virter容器内: https://blog.csdn.net/hkking/article/details/120996413
+  mkdir -p /dev/net
+  mknod /dev/net/tun c 10 200
+  chmod 600 /dev/net/tun
 }
 
 # virshInit 2>&1 |tee -a init.log
