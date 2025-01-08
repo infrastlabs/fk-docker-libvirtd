@@ -1,0 +1,38 @@
+# https://gitee.com/g-golang/fk-virter/blob/sam-custom/doc/provisioning.md
+version = 1
+
+[values]
+Image = "virter-hello-text"
+
+[env]
+foo = "rck"
+
+[[steps]]
+[steps.container]
+# Go templating can be used for many values
+image = "{{.Image}}"
+[steps.container.env]
+TEXT = "foo"
+VAR_BAR = "hi"
+[steps.container.copy]
+source = "/tmp/somefile"
+dest = "."
+
+[[steps]]
+[steps.shell]
+script = "env && touch /tmp/$foo"
+[steps.shell.env]
+# this overrides the global env variable foo
+foo = "rck"
+
+[[steps]]
+[steps.shell]
+script = """
+yum remove -y make
+yum install -y make
+"""
+
+[[steps]]
+[steps.rsync]
+source = "/tmp/*.rpm"
+dest = "/root/rpms"
