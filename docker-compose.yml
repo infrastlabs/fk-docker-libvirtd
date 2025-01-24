@@ -6,8 +6,10 @@
 # version: '2.4' #dcp-v2.29.7: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion
 services:
   virter:
-    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/barge-build-compiler-ubt1604:qemu #latest
     # image: ghcr.io/speedy37/docker-libvirtd/libvirtd:main
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/barge-build-compiler-ubt1604:qemu #latest
+    # image: ${REPO}infrasync/v2025:infrastlabs--docker-libvirtd---v2501-alpine319
+    # 
     # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:latest
     # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501
     image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-alpine319
@@ -42,7 +44,8 @@ services:
   # https://github.com/m-bers/docker-virt-manager
   virt-manager:
     # image: mber5/virt-manager:latest
-    image: registry.cn-shenzhen.aliyuncs.com/infrasync/mber5-virt-manager:latest #x64,arm64
+    # image: registry.cn-shenzhen.aliyuncs.com/infrasync/mber5-virt-manager:latest #x64,arm64
+    image: ${REPO}infrasync/v2025:mber5--virt-manager---latest
     restart: always
     ports:
       - 8185:80
