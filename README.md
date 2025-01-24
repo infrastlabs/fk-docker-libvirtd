@@ -1,19 +1,20 @@
 
 **Docs**
 
-- arm64
-  - [250107a-arm64-vm.md](./docs/250107a-arm64-vm.md) 「alpine313.ARM环境虚机: virter.vm模板调整+`share/qemu/firmware/60-edk2-aarch64.json`修正」
-  - [250107b-arm64-images.md](./docs/250107b-arm64-images.md) 「Debian/Ubuntu, Alma/Rocky, Alpine的尝试」
-  - [250113-arm64-rk3588.md](./docs/250113-arm64-rk3588.md) 「两台AIEC板子，Linaro系统下的KVM运行尝试」
+- kubeVirt
+  - [kvirt-250509-ins01.md](./docs/kvirt-250509-ins01.md) 「citydev集群-v1.21.10版、k3s,ke集群-v1.26版」
+  - [kvirt-250512-use01.md](./docs/kvirt-250512-use01.md) 「vmi vmCreate vmAccess vmTypes,Refs」
 - virter
   - [vt-250108-images.md](./docs/vt-250108-images.md) 「vtOrgDocs, http-reg.availabel, ophub-armbian」
     - vtOrgDocs:`images,import,network,provision,ssh.nux/win`
     - ophub-armbian:`ubt22-jammy,ubt24-noble; deb11-bullseye, deb12-bookworm`
   - [vt-250111-network.md](./docs/vt-250111-network.md) 「vt/virtMgr网络模式: `nat bridge route, none; +open, isolated, SR-IOV`」
   - [vt-250124-registry.md](./docs/vt-250124-registry.md) 「testPush`(aliFail, harborOK)`；镜像转存harbor」
-- kubeVirt
-  - [kvirt-250509-ins01.md](./docs/kvirt-250509-ins01.md) 「citydev集群-v1.21.10版、k3s,ke集群-v1.26版」
-  - [kvirt-250512-use01.md](./docs/kvirt-250512-use01.md) 「vmi vmCreate vmAccess vmTypes,Refs」
+- arm64
+  - [250107a-arm64-vm.md](./docs/250107a-arm64-vm.md) 「alpine313.ARM环境虚机: virter.vm模板调整+`share/qemu/firmware/60-edk2-aarch64.json`修正」
+  - [250107b-arm64-images.md](./docs/250107b-arm64-images.md) 「Debian/Ubuntu, Alma/Rocky, Alpine的尝试」
+  - [250113-arm64-rk3588.md](./docs/250113-arm64-rk3588.md) 「两台AIEC板子，Linaro系统下的KVM运行尝试」
+  - [250910-oe-efi.md](./docs/250910-oe-efi.md) 「{OVMF AAVMF}、ISO-ARM64、ubuntu-mgr; `ubt/alpine: qemu/libvirt/virt-mgr vers`」
 
 ## docker-libvirtd
 
