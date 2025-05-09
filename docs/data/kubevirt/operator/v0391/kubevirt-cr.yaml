@@ -10,3 +10,6 @@ spec:
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
   workloadUpdateStrategy: {}
+  # https://blog.itpub.net/70024420/viewspace-2965242/
+  imageRegistry: harbor.pcitech.com/kubevirt
+

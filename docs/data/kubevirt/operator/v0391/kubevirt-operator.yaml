@@ -1881,7 +1881,11 @@ spec:
         - "2"
         env:
         - name: OPERATOR_IMAGE
-          value: quay.io/kubevirt/virt-operator@sha256:2429917d5fa837c5b3f7a8ebcc4df6f9574d3bbab8f9d47c45d1a71d150e0c7f
+          # value: quay.io/kubevirt/virt-operator@sha256:2429917d5fa837c5b3f7a8ebcc4df6f9574d3bbab8f9d47c45d1a71d150e0c7f
+          # {"component":"virt-operator","level":"info","msg":"can not parse operator image env var harbor.pcitech.com/infrasync/v2025:kubevirt--virt-operator---v0.39.1\n","pos":"application.go:132","timestamp":"2025-05-13T02:30:40.222547Z"}
+          # value: harbor.pcitech.com/infrasync/v2025:kubevirt--virt-operator---v0.39.1
+          # 把value改为标准格式，错误即解决（其用于operator内对于api等镜像前缀的解析； <高版本：可kubevirt-cr.yaml内经imageRegistry额外指定，v0.x则不行了>）
+          value: harbor.pcitech.com/kubevirt/virt-operator:v0.39.1
         - name: WATCH_NAMESPACE
           valueFrom:
             fieldRef:
@@ -1896,7 +1900,8 @@ spec:
           value: sha256:2f83ab96eb11c628ba82dfc5833f6d427e0d40d39d75d43b5e4bbe0e469f852a
         - name: VIRT_LAUNCHER_SHASUM
           value: sha256:d62b20e66478982873964c0332aad21fb0f34ed4172906dbbcd61f71b779b104
-        image: quay.io/kubevirt/virt-operator@sha256:2429917d5fa837c5b3f7a8ebcc4df6f9574d3bbab8f9d47c45d1a71d150e0c7f
+        # image: quay.io/kubevirt/virt-operator@sha256:2429917d5fa837c5b3f7a8ebcc4df6f9574d3bbab8f9d47c45d1a71d150e0c7f
+        image: harbor.pcitech.com/infrasync/v2025:kubevirt--virt-operator---v0.39.1
         imagePullPolicy: IfNotPresent
         name: virt-operator
         ports:

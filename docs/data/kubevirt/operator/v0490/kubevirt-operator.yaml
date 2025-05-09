@@ -5169,12 +5169,16 @@ spec:
         - "2"
         env:
         - name: OPERATOR_IMAGE
-          value: quay.io/kubevirt/virt-operator:v0.49.0
+          # value: quay.io/kubevirt/virt-operator:v0.49.0
+          # value: harbor.pcitech.com/infrasync/v2025:kubevirt--virt-operator---v0.49.0
+          # 把value改为标准格式，错误即解决（其用于operator内对于api等镜像前缀的解析； <高版本：可kubevirt-cr.yaml内经imageRegistry额外指定，v0.x则不行了>）
+          value: harbor.pcitech.com/kubevirt/virt-operator:v0.49.0
         - name: WATCH_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.annotations['olm.targetNamespaces']
-        image: quay.io/kubevirt/virt-operator:v0.49.0
+        # image: quay.io/kubevirt/virt-operator:v0.49.0
+        image: harbor.pcitech.com/infrasync/v2025:kubevirt--virt-operator---v0.49.0
         imagePullPolicy: IfNotPresent
         name: virt-operator
         ports:

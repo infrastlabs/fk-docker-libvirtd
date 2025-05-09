@@ -12,3 +12,26 @@ spec:
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
   workloadUpdateStrategy: {}
+  # https://blog.itpub.net/70024420/viewspace-2965242/
+  # imageregistry: ts3.harbor.com.cn/kubernetes/kubevirt
+  # quay.io/kubevirt/virt-operator:v1.1.1 ##https://quay.io/organization/kubevirt
+    # /virt-api:v1.1.1
+    # virt-controller virt-handler virt-launcher 
+    # cdi-operator cdi-controller cdi-uploadproxy cdi-apiserver  cdi-importer cdi-cloner cdi-uploadserver
+    # cirros-container-disk-demo
+    # cni-default-plugins kubemacpool bridge-marker ovs-cni-marker ovs-cni-plugin 
+    # hostpath-provisioner-operator hostpath-csi-driver csi-driver virtio-container-disk
+    # hyperconverged-cluster-operator cluster-network-addons-operator
+  # 
+  # unknown field "imageregistry" in io.kubevirt.v1.KubeVirt.spec
+  imageRegistry: harbor.pcitech.com/kubevirt
+  # infra:
+  #   nodePlacement:
+  #     nodeSelector:
+  #       node-role.kubernetes.io/control-plane: ""
+  # workloads:
+  #   nodePlacement:
+  #     nodeSelector:
+  #       # error converting YAML to JSON: yaml: line 34: did not find expected key
+  #       node-role.kubernetes.io/BIZ-Kubevirt: true #"true"
+  #    workloadUpdateStrategy: {}
