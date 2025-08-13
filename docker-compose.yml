@@ -12,7 +12,8 @@ services:
     # 
     # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:latest
     # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501
-    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-alpine319
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-alpine319
+    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-alpine319-ppc64le
     # command: /srv/local/k3s/entry.sh
     entrypoint: /bin/bash /srv/local/libvirt/build/entry.sh
     restart: unless-stopped
@@ -45,7 +46,8 @@ services:
   virt-manager:
     # image: mber5/virt-manager:latest
     # image: registry.cn-shenzhen.aliyuncs.com/infrasync/mber5-virt-manager:latest #x64,arm64
-    image: ${REPO}infrasync/v2025:mber5--virt-manager---latest
+    # image: ${REPO}infrasync/v2025:mber5--virt-manager---latest
+    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/virt-manager:latest
     restart: always
     ports:
       - 8185:80
