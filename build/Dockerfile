@@ -1,7 +1,8 @@
 # FROM alpine
 # 3.13.12> 3.19
-FROM registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501 as virter-alpine313
-FROM registry.cn-shenzhen.aliyuncs.com/infrasync/library-alpine:3.19
+# FROM registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501 as virter-alpine313
+# FROM registry.cn-shenzhen.aliyuncs.com/infrasync/v2025:library--alpine---3.19
+FROM alpine:3.19
 ARG TARGETPLATFORM
 RUN domain="mirrors.tuna.tsinghua.edu.cn"; \
   echo "http://$domain/alpine/v3.19/main" > /etc/apk/repositories; \
@@ -18,6 +19,7 @@ RUN apk add --no-cache \
     libvirt-qemu \
     qemu-system-x86_64 \
     qemu-system-aarch64 \
+    qemu-system-ppc64 \
     # edk2 ovmf \
     qemu-audio-alsa \
     qemu-audio-oss \
@@ -66,6 +68,7 @@ RUN \
     "linux/arm/v7") arch=arm      ;; \
     "linux/arm/v6") arch=NONE_armel ;; \
     "linux/386")    arch=NONE_i386  ;; \
+    "linux/ppc64le")  arch=ppc64le  ;; \
   esac; \
   file=virter-linux-$arch; \
   # curl -O -fSL https://ghproxy.com/https://github.com/LINBIT/virter/releases/download/v0.24.0/$file
@@ -103,7 +106,7 @@ ENV \
   SSHD_PORT=60022
 
   
-COPY --from=virter-alpine313 /usr/share/qemu/edk2-arm-vars.fd /usr/share/qemu/edk2-arm-vars.fd
+# COPY --from=virter-alpine313 /usr/share/qemu/edk2-arm-vars.fd /usr/share/qemu/edk2-arm-vars.fd
 # .profile> .bashrc> ohmybash (for: ssh_dropbear)
 # ADD ./dot/.profile /root/.profile
 ADD ./dot/ /root/
