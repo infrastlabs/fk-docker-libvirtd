@@ -8,83 +8,97 @@
 url = "https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/cloud/nocloud_alpine-3.20.3-x86_64-bios-cloudinit-r0.qcow2"
 [alpine-v320-arm64] #212M
 url = "https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/cloud/nocloud_alpine-3.20.0-aarch64-uefi-cloudinit-r0.qcow2"
+# https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/cloud/ #v3.20/3.22: x64/arm64 only
 
 # TODO1: virter不支持xz
 # openEuler https://www.openeuler.org/zh/download/#cloud
 # qcow_acc: root:openEuler12#$   ##https://docs.openeuler.org/zh/docs/24.03_LTS_SP1/docs/Releasenotes/帐号清单.html
 [openeuler-v24] #508M > 1.49G unpack@40.253
 # url = "https://mirrors.jxust.edu.cn/openeuler/openEuler-24.03-LTS-SP1/virtual_machine_img/x86_64/openEuler-24.03-LTS-SP1-x86_64.qcow2.xz"
-url = "http://172.29.30.253:81/2501/qcow/openEuler-24.03-LTS-SP1-x86_64.qcow2"
+url = "http://172.29.40.253:81/2501/qcow/openEuler-24.03-LTS-SP1-x86_64.qcow2"
 [openeuler-v24-arm64] #473M > 1.52G
 # url = "https://mirrors.jxust.edu.cn/openeuler/openEuler-24.03-LTS-SP1/virtual_machine_img/aarch64/openEuler-24.03-LTS-SP1-aarch64.qcow2.xz"
-url = "http://172.29.30.253:81/2501/qcow/openEuler-24.03-LTS-SP1-aarch64.qcow2"
+url = "http://172.29.40.253:81/2501/qcow/openEuler-24.03-LTS-SP1-aarch64.qcow2"
 [openeuler-v22] #508M > 1.49G unpack@40.253
 # url = "https://mirror.nyist.edu.cn/openeuler/openEuler-22.03-LTS-SP4/virtual_machine_img/x86_64/openEuler-22.03-LTS-SP4-x86_64.qcow2.xz"
-url = "http://172.29.30.253:81/2501/qcow/openEuler-22.03-LTS-SP4-x86_64.qcow2"
+url = "http://172.29.40.253:81/2501/qcow/openEuler-22.03-LTS-SP4-x86_64.qcow2"
 [openeuler-v22-arm64] #473M > 1.52G
 # url = "https://mirror.nyist.edu.cn/openeuler/openEuler-22.03-LTS-SP4/virtual_machine_img/aarch64/openEuler-22.03-LTS-SP4-aarch64.qcow2.xz"
-url = "http://172.29.30.253:81/2501/qcow/openEuler-22.03-LTS-SP4-aarch64.qcow2"
-
+url = "http://172.29.40.253:81/2501/qcow/openEuler-22.03-LTS-SP4-aarch64.qcow2"
+# org-none; existed: aarch64 loongarch64 riscv64 x86_64
 
 # openSUSE leapmicro https://get.opensuse.org/leapmicro/6.1/#download
 [opensuse-micro-v61] #1.2 GiB
 url = "https://download.opensuse.org/distribution/leap-micro/6.1/appliances/openSUSE-Leap-Micro.x86_64-Default-qcow.qcow2"
 [opensuse-micro-v61-arm64] #1.2 GiB
 url = "https://download.opensuse.org/distribution/leap-micro/6.1/appliances/openSUSE-Leap-Micro.aarch64-Default-qcow.qcow2"
+# non-ppc64; https://download.opensuse.org/distribution/leap-micro/6.2/appliances/
 
 # armbian: jammy_current_6.6.69-sdk
 # armbian https://github.com/armbian/sdk ##Armbian Jammy{x86/arm64, iso/qcow2, preinstalled Docker, TODO:autologin:armbian, }
 [armbian-v22] #1.03 GB> unpacck:4.11G
 # url = "https://github.com/armbian/sdk/releases/download/24.11.2/Armbian_24.11.2_Uefi-x86_jammy_current_6.6.69-sdk.img.qcow2.xz"
-url = "http://172.29.30.253:81/2501/qcow/2025-01-10-12-25-20-sdk-Armbian_24.11.2_Uefi-x86_jammy_current_6.6.69-sdk.img.qcow2"
+url = "http://172.29.40.253:81/2501/qcow/2025-01-10-12-25-20-sdk-Armbian_24.11.2_Uefi-x86_jammy_current_6.6.69-sdk.img.qcow2"
 [armbian-v22-arm64] #1020 MB> unpacck:4.11G
 # url = "https://github.com/armbian/sdk/releases/download/24.11.2/Armbian_24.11.2_Uefi-arm64_jammy_current_6.6.69-sdk.img.qcow2.xz"
-url = "http://172.29.30.253:81/2501/qcow/2025-01-10-12-24-48-sdk-Armbian_24.11.2_Uefi-arm64_jammy_current_6.6.69-sdk.img.qcow2"
+url = "http://172.29.40.253:81/2501/qcow/2025-01-10-12-24-48-sdk-Armbian_24.11.2_Uefi-arm64_jammy_current_6.6.69-sdk.img.qcow2"
 
 # ophub-armbian
 [ophub-armbian-deb11-arm64] #656 MB> 1.85G
 # url = "https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_bullseye_save_2025.01/Armbian_25.02.0-trunk_5.02.0.img.gz"
-url = "http://172.29.30.253:81/2501/qcow/2025-01-10-14-35-48-amlogic-s9xxx-armbian-Armbian_25.02.0-trunk_5.02.0-deb11-bullseye.img"
+url = "http://172.29.40.253:81/2501/qcow/2025-01-10-14-35-48-amlogic-s9xxx-armbian-Armbian_25.02.0-trunk_5.02.0-deb11-bullseye.img"
 [ophub-armbian-ubt24-arm64] #783 MB> 2.26G
 # url = "https://github.com/ophub/amlogic-s9xxx-armbian/releases/download/Armbian_noble_save_2025.01/Armbian_25.02.0-trunk_5.02.0.img.gz "
-url = "http://172.29.30.253:81/2501/qcow/2025-01-10-12-36-06-amlogic-s9xxx-armbian-Armbian_25.02.0-trunk_5.02.0-ubt24-noble.img"
+url = "http://172.29.40.253:81/2501/qcow/2025-01-10-12-36-06-amlogic-s9xxx-armbian-Armbian_25.02.0-trunk_5.02.0-ubt24-noble.img"
 
 ##########################
+# https://cloud-images.ubuntu.com ##conn-err @25.8.20
+# cloud-images.ubuntu.com>> https://mirrors.huaweicloud.com/ubuntu-cloud-images  ##error="bad http status: 418 "
+# cloud-images.ubuntu.com>> https://mirrors.ustc.edu.cn/ubuntu-cloud-images  ##error="bad http status: 403 Forbidden"; firefox:Verifying your browser
+# cloud-images.ubuntu.com>> https://mirrors.tuna.tsinghua.edu.cn/ubuntu-cloud-images ##error="bad http status: 403 Forbidden"
+# cloud-images.ubuntu.com>> http://172.29.40.253:81/2501/qcow_ubt/
 # http://cloud-images.ubuntu.com/daily/server/focal/current/?C=D;O=A
 # https://cloud-images.ubuntu.com/focal/current/?C=D;O=A
 [ubuntu-v24] #581M| 无:amd64-disk-kvm.img
-url = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+url = "http://172.29.40.253:81/2501/qcow_ubt/noble/current/noble-server-cloudimg-amd64.img"
 [ubuntu-v22] #635M| 605M 有且仅:amd64-disk-kvm.img; UEFI/GPT Bootable disk image,with linux-kvm KVM optimised kernel
-# url = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
-url = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64-disk-kvm.img"
+# url = "http://172.29.40.253:81/2501/qcow_ubt/jammy/current/jammy-server-cloudimg-amd64.img"
+url = "http://172.29.40.253:81/2501/qcow_ubt/jammy/current/jammy-server-cloudimg-amd64-disk-kvm.img"
 [ubuntu-v20] #608M| 587M 有且仅:amd64-disk-kvm.img
-# url = "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
-url = "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64-disk-kvm.img"
+# url = "http://172.29.40.253:81/2501/qcow_ubt/focal/current/focal-server-cloudimg-amd64.img"
+url = "http://172.29.40.253:81/2501/qcow_ubt/focal/current/focal-server-cloudimg-amd64-disk-kvm.img"
 [ubuntu-v18] #387M, arm:359M| 无:amd64-disk-kvm.img
-url = "https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img"
+url = "http://172.29.40.253:81/2501/qcow_ubt/bionic/current/bionic-server-cloudimg-amd64.img"
 [ubuntu-v16] #301M, uefi:311M
-# url = "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img"
-url = "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-uefi1.img"
+# url = "http://172.29.40.253:81/2501/qcow_ubt/xenial/current/xenial-server-cloudimg-amd64-disk1.img"
+url = "http://172.29.40.253:81/2501/qcow_ubt/xenial/current/xenial-server-cloudimg-amd64-uefi1.img"
 [ubuntu-v16-arm64] #448M, uefi:461M, armhf:443M
-# url = "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-arm64-disk1.img"
-url = "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-arm64-uefi1.img"
+# url = "http://172.29.40.253:81/2501/qcow_ubt/xenial/current/xenial-server-cloudimg-arm64-disk1.img"
+url = "http://172.29.40.253:81/2501/qcow_ubt/xenial/current/xenial-server-cloudimg-arm64-uefi1.img"
 [ubuntu-v20-arm64] #579.92M
-url = "https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-arm64.img"
+url = "http://172.29.40.253:81/2501/qcow_ubt/focal/current/focal-server-cloudimg-arm64.img"
 [ubuntu-v24-arm64] #574M
-url = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-arm64.img"
+url = "http://172.29.40.253:81/2501/qcow_ubt/noble/current/noble-server-cloudimg-arm64.img"
+[ubuntu-v16-ppc64] #306M
+url = "http://172.29.40.253:81/2501/qcow_ubt/xenial/current/xenial-server-cloudimg-ppc64el-disk1.img"
+[ubuntu-v20-ppc64] #608M
+url = "http://172.29.40.253:81/2501/qcow_ubt/focal/current/focal-server-cloudimg-ppc64el.img"
+[ubuntu-v24-ppc64] #607M
+url = "http://172.29.40.253:81/2501/qcow_ubt/noble/current/noble-server-cloudimg-ppc64el.img"
+
 
 ##########################
 # https://www.debian.org/distrib/ #Debian云映像; nocloud:本地QEMU虚拟机
 #  https://cloud.debian.org/images/cloud/ #HTTP.README
-[debian-12] #419M| qcow:397M> tar.gz:250M |gen.cloud:329M x64/arm64都有
+[debian-12] #419M| qcow:397M> tar.gz:250M |gen.cloud:329M x64/arm64都有; +ppc64
 # url = "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
 # url = "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-nocloud-amd64.qcow2"
 url = "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
-[debian-11] #342M| qcow:322M> tar.gz:207M |gen.cloud:270M x64/arm64都有
+[debian-11] #342M| qcow:322M> tar.gz:207M |gen.cloud:270M x64/arm64都有; none-ppc64
 # url = "https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2"
 # url = "https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-nocloud-amd64.qcow2"
 url = "https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-genericcloud-amd64.qcow2"
-[debian-10] #290M| qcow:282M> tar.gz:184M |gen.cloud:241M 只x64才有
+[debian-10] #290M| qcow:282M> tar.gz:184M |gen.cloud:241M 只x64才有; none-ppc64
 # url = "https://cloud.debian.org/images/cloud/buster/latest/debian-10-generic-amd64.qcow2"
 # url = "https://cloud.debian.org/images/cloud/buster/latest/debian-10-nocloud-amd64.qcow2"
 url = "https://cloud.debian.org/images/cloud/buster/latest/debian-10-genericcloud-amd64.qcow2"
@@ -100,6 +114,8 @@ url = "https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-genericcl
 [debian-12-arm64] #qcow:386M> tar.gz:235M |gen.cloud:320M
 # url = "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-nocloud-arm64.qcow2"
 url = "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-arm64.qcow2"
+[debian-12-ppc64] #qcow:374M, tar.gz:236M, raw:3.0G
+url = "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-ppc64el.qcow2"
 
 ##########################
 [centos-8] #1.2G
@@ -108,6 +124,11 @@ url = "https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.4
 url = "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2"
 [centos-6] #769M
 url = "https://cloud.centos.org/centos/6/images/CentOS-6-x86_64-GenericCloud.qcow2"
+[centos-8-arm64] #1.2G
+url = "https://cloud.centos.org/centos/8/aarch64/images/CentOS-8-GenericCloud-8.4.2105-20210603.0.aarch64.qcow2"
+[centos-8-ppc64] #1.3G
+url = "https://cloud.centos.org/centos/8/ppc64le/images/CentOS-8-GenericCloud-8.4.2105-20210603.0.ppc64le.qcow2"
+
 
 [amazonlinux-2] #1.3G
 # url = "https://cdn.amazonlinux.com/os-images/2.0.20230418.0/kvm/amzn2-kvm-2.0.20230418.0-x86_64.xfs.gpt.qcow2"
@@ -121,6 +142,9 @@ url = "https://download.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-Generic
 url = "https://download.rockylinux.org/pub/rocky/8/images/x86_64/Rocky-8-GenericCloud.latest.x86_64.qcow2"
 [rocky-9-arm64] #494M
 url = "https://download.rockylinux.org/pub/rocky/9/images/aarch64/Rocky-9-GenericCloud.latest.aarch64.qcow2"
+[rocky-9-ppc64] #510M
+url = "https://download.rockylinux.org/pub/rocky/9/images/ppc64le/Rocky-9-GenericCloud.latest.ppc64le.qcow2"
+
 [alma-9] #468M
 url = "https://repo.almalinux.org/almalinux/9/cloud/x86_64/images/AlmaLinux-9-GenericCloud-latest.x86_64.qcow2"
 [alma-8] #679M
@@ -129,6 +153,11 @@ url = "https://repo.almalinux.org/almalinux/8/cloud/x86_64/images/AlmaLinux-8-Ge
 url = "https://repo.almalinux.org/almalinux/9/cloud/aarch64/images/AlmaLinux-9-GenericCloud-latest.aarch64.qcow2"
 [alma-8-arm64] #568M
 url = "https://repo.almalinux.org/almalinux/8/cloud/aarch64/images/AlmaLinux-8-GenericCloud-latest.aarch64.qcow2"
+[alma-9-ppc64] #477M
+url = "https://repo.almalinux.org/almalinux/9/cloud/ppc64le/images/AlmaLinux-9-GenericCloud-latest.ppc64le.qcow2"
+[alma-8-ppc64] #625M
+url = "https://repo.almalinux.org/almalinux/8/cloud/ppc64le/images/AlmaLinux-8-GenericCloud-latest.ppc64le.qcow2"
+
 
 ##########################
 # barge-os{kernel-4.14} https://gitee.com/g-system/fk-barge-os
@@ -148,5 +177,8 @@ url= "https://gitee.com/g-system/fk-barge-packer/releases/download/v23.0514/cirr
 [cirros-v063-arm64] #24 MB
 # url= "https://github.com/cirros-dev/cirros/releases/download/0.6.3/cirros-0.6.3-aarch64-disk.img"
 url= "https://gitee.com/g-system/fk-barge-packer/releases/download/v23.0514/cirros-0.6.3-aarch64-disk.img"
+[cirros-v063-ppc64] #24 MB
+url= "https://gitee.com/g-system/fk-barge-packer/releases/download/v23.0514/cirros-0.6.3-ppc64le-disk.img"
+
 
 # fogproject-fos{kernel-6.6 https://gitee.com/g-system/fk-fos
