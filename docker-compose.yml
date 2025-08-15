@@ -12,13 +12,21 @@ services:
     # 
     # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:latest
     # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501
-    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-alpine319
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-alpine319
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-ubt2004
+    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-x11ubt2404
     # command: /srv/local/k3s/entry.sh
     entrypoint: /bin/bash /srv/local/libvirt/build/entry.sh
     restart: unless-stopped
     privileged: true
     network_mode: host #host #bridge
     working_dir: /srv/local/libvirt
+    # https://gitlab.com/libvirt/libvirt/-/issues/163
+    # --cgroupns=host
+    # https://github.com/docker/compose/issues/8167
+    # pid: host
+    cgroup: host
+    # cgroup_parent: /abc_group #cgroup-parent for systemd cgroup should be a valid slice named as "xxx.slice"
     # healthcheck:
     #   test: ["CMD", "bash", "-c", "supervisorctl status |grep -v 'RUNNING' && exit 1 || exit 0 "]
     # environment:
@@ -34,8 +42,10 @@ services:
       - ./:/srv/local/libvirt
       # - /var/lib/libvirt:/var/lib/libvirt
       # - /run/libvirt:/var/run/libvirt ## pve-deb10: /var/run -> /run/
-      - ./var-lib-libvirt:/var/lib/libvirt
-      - ./var-run-libvirt:/var/run/libvirt
+      - ./data/var-lib-libvirt:/var/lib/libvirt
+      - ./data/var-run-libvirt:/var/run/libvirt
+      # - ./data/etc-libvirt:/etc/libvirt #conf;
+      - ./data/etc-libvirt-qemu:/etc/libvirt/qemu
       - /_ext:/_ext
       # - ./supervisord.conf:/etc/supervisord.conf
       # - /sys/fs/cgroup:/sys/fs/cgroup 
@@ -45,7 +55,8 @@ services:
   virt-manager:
     # image: mber5/virt-manager:latest
     # image: registry.cn-shenzhen.aliyuncs.com/infrasync/mber5-virt-manager:latest #x64,arm64
-    image: ${REPO}infrasync/v2025:mber5--virt-manager---latest
+    # image: ${REPO}infrasync/v2025:mber5--virt-manager---latest
+    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/virt-manager:latest
     restart: always
     ports:
       - 8185:80
@@ -65,7 +76,8 @@ services:
       # - "/var/lib/libvirt/images:/var/lib/libvirt/images"
       # - "./var-run-libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock"
       # - "./var-lib-libvirt/images:/var/lib/libvirt/images"
-      - ./var-lib-libvirt:/var/lib/libvirt
-      - ./var-run-libvirt:/var/run/libvirt
+      - ./data/var-lib-libvirt:/var/lib/libvirt
+      - ./data/var-run-libvirt:/var/run/libvirt
+      # - ./data/etc-libvirt:/etc/libvirt #conf;
     # devices:
     #   - "/dev/kvm:/dev/kvm"
