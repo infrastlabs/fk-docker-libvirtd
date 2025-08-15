@@ -8,7 +8,8 @@ on:
   #   - cron: "0 0 * * 0"
 jobs:
   main:
-    runs-on: "ubuntu-20.04"
+    #! runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
@@ -44,10 +45,26 @@ jobs:
           # ali's| size, none-arch, layers;
           export DOCKER_REGISTRY_USER_infrastSubUser2=${{ secrets.DOCKER_REGISTRY_USER_INFRASTSUBUSER2 }}
           export DOCKER_REGISTRY_PW_infrastSubUser2=${{ secrets.DOCKER_REGISTRY_PW_INFRASTSUBUSER2 }}
-          
+          # tencloud| type:Docker-Manifest-List; none: size, arch, layers; x10:x500; slowPushBack;
+          export DOCKER_REGISTRY_TENCLOUD_USER=${{ secrets.DOCKER_REGISTRY_TENCLOUD_USER }}
+          export DOCKER_REGISTRY_TENCLOUD_PASS=${{ secrets.DOCKER_REGISTRY_TENCLOUD_PASS }}
+          # qingcloud| tag, size-only; none-arch,layer;
+          export DOCKER_REGISTRY_QCLOUD_USER=${{ secrets.DOCKER_REGISTRY_QCLOUD_USER }}
+          export DOCKER_REGISTRY_QCLOUD_PASS=${{ secrets.DOCKER_REGISTRY_QCLOUD_PASS }}
+
           export REPO_HUB=registry-1.docker.io
           export REPO_ALI=registry.cn-shenzhen.aliyuncs.com
+          export REPO_TEN=ccr.ccs.tencentyun.com
+          export REPO_TEN_HK=hkccr.ccs.tencentyun.com
+          export REPO_QING=dockerhub.qingcloud.com
           export REPO=$REPO_ALI #REPO_HUB REPO_ALI ##without "xx/"
+
+          
+          # JUST LOGIN HERE
+          # echo "${DOCKER_REGISTRY_TENCLOUD_PASS}" |docker login --username=${DOCKER_REGISTRY_TENCLOUD_USER} --password-stdin $REPO_TEN
+          echo "${DOCKER_REGISTRY_TENCLOUD_PASS}" |docker login --username=${DOCKER_REGISTRY_TENCLOUD_USER} --password-stdin $REPO_TEN_HK
+          # echo "${DOCKER_REGISTRY_QCLOUD_PASS}" |docker login --username=${DOCKER_REGISTRY_QCLOUD_USER} --password-stdin $REPO_QING
+
           
           echo doBuild; doBuild=true
           test "true" == "$doBuild" && bash build/buildx.sh #nginx
