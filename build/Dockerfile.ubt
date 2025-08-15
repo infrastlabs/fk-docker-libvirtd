@@ -1,16 +1,240 @@
 # https://github.com/iYongHsu/debian-libvirtkvm/blob/main/Dockerfile #arm
 # https://github.com/iYongHsu/debian-libvirtkvm/blob/main/Dockerfile.x86
-FROM debian:11
-LABEL maintainer='iYong'
-RUN echo 'deb http://mirrors.aliyun.com/debian bullseye main\ndeb http://mirrors.aliyun.com/debian-security bullseye-security main\ndeb http://mirrors.aliyun.com/debian bullseye-updates main' >/etc/apt/sources.list \
-    && apt update -y \
-    && apt install -y gconf2 qemu-system-x86 qemu-system-arm qemu-utils qemu-efi ipxe-qemu libvirt-daemon-system libvirt-clients bridge-utils virtinst virt-manager seabios vgabios gir1.2-spiceclientgtk-3.0 xauth \
-    && apt install -y fonts-noto* xz-utils vim wget \
-    && apt install -y openssh-server \
-    && sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config \
-    && sed -i "s/#Port 22/Port 1022/g" /etc/ssh/sshd_config && sed -i "s/#X11Forwarding yes/X11Forwarding yes/g" /etc/ssh/sshd_config \
-    && sed -i "s/#X11DisplayOffset/X11DisplayOffset/g" /etc/ssh/sshd_config && sed -i "s/#X11UseLocalhost yes/X11UseLocalhost no/g" /etc/ssh/sshd_config \
-    && sed -i 's/#user = "root"/user = "root"/' /etc/libvirt/qemu.conf && sed -i 's/#group = "root"/group = "root"/' /etc/libvirt/qemu.conf \
-    && echo 'root:debian' | chpasswd \
-    && echo '#!/bin/bash\nLOGTIME=$(date "+%Y-%m-%d %H:%M:%S")\necho "[$LOGTIME] startup run..."\nservice ssh start\nlibvirtd -d && virtlogd -d' >/init.sh && chmod +x /init.sh \
-    && echo 'if [ -f /init.sh ]; then\n      ./init.sh\nfi' >>/root/.bashrc
+# FROM debian:11
+# LABEL maintainer='iYong'
+ARG VER=20.04
+FROM registry.cn-shenzhen.aliyuncs.com/infrasync/v2025:library--ubuntu---${VER}
+ARG TARGETPLATFORM
+ARG VER=20.04
+ENV \
+  DEBIAN_FRONTEND=noninteractive
+RUN echo "Acquire {\n\
+  APT::Get::Allow-Unauthenticated \"true\";\n\
+  GPG::Ignore \"true\";\n\
+  AllowInsecureRepositories \"true\";\n\
+  AllowDowngradeToInsecureRepositories \"true\";\n\
+}" > /etc/apt/apt.conf.d/skip-gpg-check-ig; \
+  # default:echo -e;
+  echo "path-exclude /usr/share/doc/*\n\
+path-exclude /usr/share/man/*\n\
+path-exclude /usr/share/locale/*\n\
+path-exclude /usr/share/info/*\n\
+path-exclude /usr/share/help/*\n\
+path-exclude /usr/share/lintian/*\n\
+" > /etc/dpkg/dpkg.cfg.d/excludes; 
+RUN export DOMAIN="mirrors.ustc.edu.cn"; \
+  case ${VER} in \
+    "14.04")  V2=trusty  ;; \
+    "16.04")  V2=xenial  ;; \
+    "18.04")  V2=bionic  ;; \
+    "20.04")  V2=focal   ;; \
+    "22.04")  V2=jammy   ;; \
+    "24.04")  V2=noble   ;; \
+  esac; \
+  # test -z "$(echo $TARGETPLATFORM |grep arm)" && target=ubuntu || target=ubuntu-ports; \
+  # test "24.04" != "${VER}" && echo "deb http://${DOMAIN}/$target ${V2} main restricted universe multiverse" > /etc/apt/sources.list \
+  # test "24.04" != "${VER}" && echo "deb http://${DOMAIN}/$target ${V2}-updates main restricted universe multiverse">> /etc/apt/sources.list; \
+  # https://mirrors.ustc.edu.cn/help/ubuntu.html
+  sed -i 's@//.*archive.ubuntu.com@//mirrors.ustc.edu.cn@g' /etc/apt/sources.list; \
+  sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list; \
+  sed -i 's@//.*archive.ubuntu.com@//mirrors.ustc.edu.cn@g' /etc/apt/sources.list.d/ubuntu.sources; \
+  sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/ubuntu.sources; \
+  # rm -f /etc/apt/sources.list.d/*; \
+  echo 'apt update -qq && apt install -yq --no-install-recommends $@ && apt clean; rm -rf /var/lib/apt/lists/*; ' > /usr/local/bin/apt.sh \
+    && chmod +x /usr/local/bin/apt.sh; 
+
+RUN \
+    apt.sh wget ca-certificates \
+    curl \
+    htop rsync tree tmux lrzsz psmisc fuse net-tools iputils-ping \
+    procps sudo iproute2 iptables zip unzip xz-utils vim-tiny \
+    # lame \
+    openssh-sftp-server lftp jq
+
+# # root@00d274c95a5f:/# apt install qemu-system-*      
+# Note, selecting 'qemu-system-x86' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-x86-microvm' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-x86-xen' for glob 'qemu-system-*'
+# # Note, selecting 'qemu-system-x86-64' for glob 'qemu-system-*'
+# # Note, selecting 'qemu-system-i386' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-arm' for glob 'qemu-system-*'
+# # Note, selecting 'qemu-system-aarch64' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-mips' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-s390x' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-ppc' for glob 'qemu-system-*'
+# # Note, selecting 'qemu-system-ppc64' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-sparc' for glob 'qemu-system-*'
+# # Note, selecting 'qemu-system-sparc64' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-common' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-gui' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-misc' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-data' for glob 'qemu-system-*'
+# 
+# Note, selecting 'qemu-system-x86' instead of 'qemu-system-i386'
+# Note, selecting 'qemu-system-x86' instead of 'qemu-system-x86-64'
+# Note, selecting 'qemu-system-arm' instead of 'qemu-system-aarch64'
+# Note, selecting 'qemu-system-ppc' instead of 'qemu-system-ppc64'
+# Note, selecting 'qemu-system-sparc' instead of 'qemu-system-sparc64'
+# 
+# qemu-system-x86-xen : Conflicts: qemu-system-x86 but 1:4.2-3ubuntu6.30 is to be installed
+
+
+# ref.deb11.x64-for-arm?: without --no-install-recommends
+  # apt update -y \
+  #   && apt install -y gconf2 qemu-system-arm qemu-utils qemu-efi ipxe-qemu libvirt-daemon-system libvirt-clients bridge-utils virtinst virt-manager seabios vgabios gir1.2-spiceclientgtk-3.0 xauth
+RUN apt.sh \
+    qemu-system-x86 qemu-system-arm qemu-system-ppc qemu-utils ipxe-qemu \
+    libvirt-daemon-system libvirt-clients virtinst \
+    # virt-manager gir1.2-spiceclientgtk-3.0 xauth\
+    bridge-utils seabios vgabios ; 
+    # apt clean; rm -rf /var/lib/apt/lists/*;
+# ubt24-none: qemu-efi gconf2
+RUN \
+  test "24.04" != "${VER}" && apt.sh gconf2 qemu-efi; \
+  exit 0
+
+# $ pkgsize  |grep noto
+# 0.03 Mbs	fonts-noto|20200323-1build1~ubuntu20.04.1
+# 0.15 Mbs	fonts-noto-mono|20200323-1build1~ubuntu20.04.1
+# 34.98 Mbs	fonts-noto-core|20200323-1build1~ubuntu20.04.1
+# 
+# 0.03 Mbs	fonts-noto-hinted|20200323-1build1~ubuntu20.04.1
+# 0.96 Mbs	fonts-noto-unhinted|20200323-1build1~ubuntu20.04.1
+# 4.54 Mbs	fonts-noto-ui-core|20200323-1build1~ubuntu20.04.1
+# 10.36 Mbs	fonts-noto-color-emoji|0~20200916-1~ubuntu20.04.1
+# 59.78 Mbs	fonts-noto-ui-extra|20200323-1build1~ubuntu20.04.1
+# 87.73 Mbs	fonts-noto-cjk|1:20190410+repack1-2
+# 206.75 Mbs	fonts-noto-cjk-extra|1:20190410+repack1-2
+# 314.97 Mbs	fonts-noto-extra|20200323-1build1~ubuntu20.04.1
+RUN \
+    # xz-utils vim wget openssh-server 
+    apt.sh fonts-noto fonts-noto-core fonts-noto-mono dnsmasq \
+    supervisor dropbear git
+RUN \
+    # f=/etc/ssh/sshd_config; \
+    # sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" $f; \
+    # sed -i "s/#Port 22/Port 1022/g" $f; \
+    # sed -i "s/#X11Forwarding yes/X11Forwarding yes/g" $f; \
+    # sed -i "s/#X11DisplayOffset/X11DisplayOffset/g" $f; \
+    # sed -i "s/#X11UseLocalhost yes/X11UseLocalhost no/g" $f; \
+    # \
+    sed -i 's/#user = "root"/user = "root"/' /etc/libvirt/qemu.conf; \
+    sed -i 's/#group = "root"/group = "root"/' /etc/libvirt/qemu.conf; \
+    # \
+    # && echo 'root:debian' | chpasswd \
+    # && echo '#!/bin/bash\nLOGTIME=$(date "+%Y-%m-%d %H:%M:%S")\necho "[$LOGTIME] startup run..."\nservice ssh start\nlibvirtd -d && virtlogd -d' >/init.sh 
+    # && chmod +x /init.sh \
+    # && echo 'if [ -f /init.sh ]; then\n      ./init.sh\nfi' >>/root/.bashrc \
+    exit 0;
+
+
+
+
+# ref ./Dockerfile alpine's ver
+# ohmybash: font> axin(badColorView@alpine3.13) >> axin-viewOK @3.13.12;
+RUN \
+  bash -c "$(wget https://gitee.com/g-system/oh-my-bash/raw/sam-custom/tools/install.sh -O -)"; \
+  sed -i 's/OSH_THEME.*/OSH_THEME="axin"/g' /root/.bashrc; cat /root/.bashrc |grep axin; 
+
+# tini,gosu
+# https://github.com/krallin/tini/releases/download/v0.19.0/tini-static-muslc-amd64
+# https://github.com/tianon/gosu/releases/download/1.11/gosu-$arch
+
+# virter-v0.24.0
+RUN \
+  case ${TARGETPLATFORM} in \
+    "linux/amd64")  arch=amd64    ;; \
+    "linux/arm64")  arch=arm64    ;; \
+    "linux/arm/v7") arch=arm      ;; \
+    "linux/ppc64le") arch=ppc64le   ;; \
+    "linux/arm/v6") arch=NONE_armel ;; \
+    "linux/386")    arch=NONE_i386  ;; \
+  esac; \
+  file=virter-linux-$arch; \
+  # https://github.com/infrastlabs/fk-virter/releases/download/v24.12/virter-linux-amd64 #none: xx-upx.tar.gz (err@23.2-kylin)
+  test -s $file || wget -O $file https://github.com/infrastlabs/fk-virter/releases/download/v24.12/$file; \
+  chmod +x $file; mv $file /bin/virter;
+
+RUN \
+  echo "welcome! virter." > /etc/motd; \
+  TIMEZONE=Asia/Shanghai; \
+  ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && echo $TIMEZONE > /etc/timezone; \
+  #bin-link
+  mv /bin/sh /bin/busy_sh && ln -s /bin/bash /bin/sh; \
+  \
+  mkdir -p /etc/dropbear /var/log/supervisor; \
+  # echo -e "#!/bin/bash\ntest -z "\$1" && exit 0; supervisord ctl \$@" > /usr/local/bin/sv; chmod +x /usr/local/bin/sv; \
+  \
+  # + ##ssh
+  sed -i "s^/bin/ash^/bin/bash^g" /etc/passwd; \
+  echo "root:root" |chpasswd;
+
+ENV \
+  TERM=xterm \
+  SHELL=/bin/bash \
+  # TIMEZONE=Asia/Shanghai \
+  # LANG=C.UTF-8 \
+  # SSHD_ENABLE=true \
+  SSHD_PORT=60022
+
+  
+# COPY --from=virter-alpine313 /usr/share/qemu/edk2-arm-vars.fd /usr/share/qemu/edk2-arm-vars.fd
+ADD ./dot/ /root/
+COPY supervisord.conf /etc/supervisord.conf
+
+VOLUME ["/var/run/libvirt/", "/var/lib/libvirt"]
+# ENTRYPOINT ["/sbin/tini","--"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+
+# ubt24
+# cat > /etc/apt/apt.conf.d/skip-gpg-check-ig <<EOF
+# Acquire {
+#   APT::Get::Allow-Unauthenticated true;
+#   GPG::Ignore true;
+#   AllowInsecureRepositories true;
+#   AllowDowngradeToInsecureRepositories true;
+# }
+# EOF
+
+# Note, selecting 'qemu-system-mips64' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-mips64el' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-mipsel' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-alpha' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-cris' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-hppa' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-lm32' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-m68k' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-microblaze' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-microblazeel' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-moxie' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-nios2' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-or1k' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-riscv32' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-riscv64' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-sh4' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-sh4eb' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-tricore' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-unicore32' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-xtensa' for glob 'qemu-system-*'
+# Note, selecting 'qemu-system-xtensaeb' for glob 'qemu-system-*'
+# # Note, selecting 'qemu-system-mips' instead of 'qemu-system-mips64'
+# # Note, selecting 'qemu-system-mips' instead of 'qemu-system-mips64el'
+# # Note, selecting 'qemu-system-mips' instead of 'qemu-system-mipsel'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-alpha'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-cris'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-hppa'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-lm32'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-m68k'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-microblaze'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-microblazeel'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-moxie'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-nios2'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-or1k'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-riscv32'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-riscv64'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-sh4'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-sh4eb'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-tricore'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-unicore32'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-xtensa'
+# # Note, selecting 'qemu-system-misc' instead of 'qemu-system-xtensaeb'
