@@ -26,9 +26,18 @@
 **virter-env**
 
 - infrastlabs/docker-libvirtd:v2501 #v3.13
-  - qemu-5.2.0-r3 x86_64, qemu-img-5.2.0-r3 x86_64, qemu-system-aarch64-5.2.0-r3 x86_64, qemu-system-x86_64-5.2.0-r3 x86_64
-  - libvirt-6.10.0-r1 x86_64, libvirt-daemon-6.10.0-r1 x86_64, libvirt-client-6.10.0-r1 x86_64, libvirt-qemu-6.10.0-r1 x86_64
+  - qemu-5.2.0-r3, `qemu-img-5.2.0-r3, qemu-system-aarch64-5.2.0-r3, qemu-system-x86_64-5.2.0-r3`
+  - libvirt-6.10.0-r1, `libvirt-daemon-6.10.0-r1, libvirt-client-6.10.0-r1, libvirt-qemu-6.10.0-r1`
 - infrastlabs/docker-libvirtd:v2501-alpine319 `virt-manager: 有监控指标了`
-  - qemu-8.1.5-r0 x86_64, qemu-img-8.1.5-r0 x86_64, qemu-system-aarch64-8.1.5-r0 x86_64, qemu-system-x86_64-8.1.5-r0 x86_64
-  - libvirt-9.10.0-r0 x86_64, libvirt-daemon-9.10.0-r0 x86_64, libvirt-client-9.10.0-r0 x86_64, libvirt-qemu-9.10.0-r0 x86_64
+  - qemu-8.1.5-r0, `qemu-img-8.1.5-r0, qemu-system-aarch64-8.1.5-r0, qemu-system-x86_64-8.1.5-r0`
+  - libvirt-9.10.0-r0, `libvirt-daemon-9.10.0-r0, libvirt-client-9.10.0-r0, libvirt-qemu-9.10.0-r0`
+- infrastlabs/docker-libvirtd:v2501-ubt2004 `qemu-system-x86_64 -version` `/usr/sbin/libvirtd -V`
+  - `QEMU emulator version 4.2.1 (Debian 1:4.2-3ubuntu6.30)`
+  - `/usr/sbin/libvirtd (libvirt) 6.0.0`
+- infrastlabs/docker-libvirtd:v2501-ubt2204
+  - `QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.26)`
+  - `/usr/sbin/libvirtd (libvirt) 8.0.0`
+- infrastlabs/docker-libvirtd:v2501-ubt2404
+  - `QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.9)`
+  - `libvirtd (libvirt) 10.0.0`
 
