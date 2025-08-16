@@ -11,6 +11,43 @@
 root @ armbian in .../local/libvirt |09:35:02  |sam-custom ?:9 ✗| 
 $ virsh capabilities #q35> pc; @arch.go
 
+
+# 2508
+  vm.sh init
+  id=102; vt network host add --id=$id; vt vm run --id=$id cirros-v063
+  # ubt20: ok
+  # ubt22: cgroupErr
+    root @ deb11-11 in ~ |02:04:56  
+    $ id=107; vt network host add --id=$id; vt vm run --id=$id cirros-v063
+    FATA[0001] Failed to start VM 107: could not create (start) domain: unable to open '/sys/fs/cgroup/machine/qemu-2-cirros-v063-107.libvirt-qemu/': No such file or directory  
+  # ubt24: cgroupErr
+    root @ deb11-11 in ~ |09:54:34  
+    $ id=105; vt network host add --id=$id; vt vm run --id=$id cirros-v063
+    FATA[0001] Failed to start VM 105: could not create (start) domain: unable to open '/sys/fs/cgroup/machine/qemu-5-cirros-v063-105.libvirt-qemu/': No such file or directory  
+  # ubt22/2404>> fix: @dcp
+    # https://gitlab.com/libvirt/libvirt/-/issues/163
+    # https://github.com/docker/compose/issues/8167
+    # --cgroupns=host
+    cgroup: host
+    # 
+    root @ deb11-11 in ~ |12:01:42  
+    $ id=109; vt network host add --id=$id; vt vm run --id=$id cirros-v063
+    cirros-v063-109
+  # vm autostart
+  # dcp: - ./data/etc-libvirt-qemu:/etc/libvirt/qemu
+  # dcp换版: 24>> 22> 2004: 不能向下兼容;
+  root @ deb11-11 in ~ |14:45:01  
+  $ virsh list --all
+  $ virsh autostart cirros-v063-102
+
+# imgs
+  root @ deb11-11 in .../apps/fk-docker-libvirtd |14:48:33  |sam-custom U:3 ?:10 _| 
+  $ docker images |grep v2501
+  registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd  v2501-ubt2004   813f898fb792   8 minutes ago   721MB
+  registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd  v2501-ubt2204   101c69bc90f4   9 minutes ago   847MB
+  registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd  v2501-ubt2404   a8135794bc4c   9 minutes ago   606MB
+  registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd  v2501-alpine319      1813ebe44040   7 months ago    448MB
+  registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd  v2501      6f29925cefdb   7 months ago    504MB
 ```
 
 ## 二、2023.3
@@ -60,8 +97,8 @@ id=171; vt network host add --id $id; virter vm run --name=$id --id=$id --vcpus=
 
 ```bash
 02:20:58 root@pve2372 ~ → id=200; vt network host add --id $id; virter vm run --name=$id --id=$id --vcpus=4 --memory=8G --user=barge $mnt barge214x; 
-FATA[0000] preset ID '200' already used                 
-barge214x pull done         [=============================================================================================] 26.44MiB / 26.44MiB
+FATA[0000] preset ID '200' already used  
+barge214x pull done    [=============================================================================================] 26.44MiB / 26.44MiB
 virter:layer:sha256:3556 buffer layer done [==============================================================================] 26.44MiB / 26.44MiB
 virter:layer:sha256:3556 upload layer done [==============================================================================] 26.44MiB / 26.44MiB
 FATA[0053] Failed to start VM 200: domain '200' already defined 
@@ -70,8 +107,8 @@ FATA[0053] Failed to start VM 200: domain '200' already defined
 
 # 未清kvm; 重启容器；
 02:23:23 root@pve2372 ~ → vt vm rm 200
-INFO[0000] deleted layer                                 layer="virter:work:200"
-INFO[0000] deleted layer                                 layer="virter:work:200-cidata"
+INFO[0000] deleted layer   layer="virter:work:200"
+INFO[0000] deleted layer   layer="virter:work:200-cidata"
 INFO[0000] Undefine VM  
 
 # 再次启OK>> ssh进入
@@ -112,8 +149,8 @@ docker run --privileged \
 latest: Pulling from infrastlabs/docker-libvirtd
 72cfd02ff4d0: Already exists
 abf743d9e8e0: Pull complete
-38e34897edf8: Downloading [========>             ]   13.8MB/78.72MB
-fc261701be9f: Downloading [===========>          ]  13.34MB/18.57MB
+38e34897edf8: Downloading [========>   ]   13.8MB/78.72MB
+fc261701be9f: Downloading [===========>     ]  13.34MB/18.57MB
 505974503259: Download complete
 15782b2939e4: Verifying Checksum
 
@@ -142,10 +179,10 @@ virsh list --all --persistent
 virsh dominfo 108
 
 # domain-cmds
-  setmem                         change memory allocation
-  setvcpus                       change number of virtual CPUs
-  shutdown                       gracefully shutdown a domain
-  start                          start a (previously defined) inactive domain
+  setmem     change memory allocation
+  setvcpus   change number of virtual CPUs
+  shutdown   gracefully shutdown a domain
+  start      start a (previously defined) inactive domain
   reset
   suspend
   destroy
@@ -177,7 +214,7 @@ user_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJQ3ig6FIzlyOlyqPxXPu3O
 ```bash
 # go-src: internal/virter/vm.go
 	log.Print("Create cloud-init volume")
-	_, err = v.createCIData(vmConfig, hostkey) // mount a disk(vm\'s name sshkeys), vm-mount-use??
+	_, err = v.createCIData(vmConfig, hostkey) // mount a disk(vm\s name sshkeys), vm-mount-use??
 	if err != nil {
 		return err
 	}
@@ -192,10 +229,10 @@ Disk /dev/vda: 40 GB, 42949672960 bytes, 83886080 sectors
 83220 cylinders, 16 heads, 63 sectors/track
 Units: sectors of 1 * 512 = 512 bytes
 
-Device  Boot StartCHS    EndCHS        StartLBA     EndLBA    Sectors  Size Id Type
-/dev/vda1 *  0,1,1       1,179,18            63      27359      27297 13.3M  4 FAT16 <32M
+Device  Boot StartCHS    EndCHS   StartLBA     EndLBA    Sectors  Size Id Type
+/dev/vda1 *  0,1,1  1,179,18  63      27359      27297 13.3M  4 FAT16 <32M
 /dev/vda2    1023,15,63  1023,15,63     2124512   83886079   81761568 38.9G 83 Linux
-/dev/vda3    2,74,19     187,62,26        27360    2124511    2097152 1024M 82 Linux swap
+/dev/vda3    2,74,19     187,62,26   27360    2124511    2097152 1024M 82 Linux swap
 
 Partition table entries are not in disk order
 [root@barge bargee]# 
@@ -218,9 +255,9 @@ Partition table entries are not in disk order
       <driver name='qemu' type='qcow2' discard='unmap'/>
       <source pool='default' volume='virter:work:170' index='2'/>
       <backingStore type='file' index='3'>
-        <format type='qcow2'/>
-        <source file='/var/lib/libvirt/images/./virter:layer:sha256:09ca0fabd66ba5eb67988e7322db53fc1469508f04813fd7881213bce3cc360c'/>
-        <backingStore/>
+   <format type='qcow2'/>
+   <source file='/var/lib/libvirt/images/./virter:layer:sha256:09ca0fabd66ba5eb67988e7322db53fc1469508f04813fd7881213bce3cc360c'/>
+   <backingStore/>
       </backingStore>
       <target dev='vda' bus='virtio'/>
       <alias name='virtio-disk0'/>
@@ -245,14 +282,14 @@ mount /dev/cdrom /dvd/ #无cdrom设备.. (barge不支持?)
 # try2 ubuntu-focal 2004
 08:01:42 root@pve03 vm ±|sam-custom ✗|→ id=171; vt network host add --id $id; virter vm run --name=$id --id=$id --vcpus=4 --memory=8G --user=barge $mnt ubuntu-focal
 INFO[0000] Add DHCP entry from 52:54:00:00:00:ab to 10.255.0.171 
-ubuntu-focal pull done         [========================================================================================] 621.25MiB / 621.25MiB
+ubuntu-focal pull done    [========================================================================================] 621.25MiB / 621.25MiB
 virter:layer:sha256:a911 buffer layer done [============================================================================] 621.25MiB / 621.25MiB
 virter:layer:sha256:a911 upload layer done [============================================================================] 621.25MiB / 621.25MiB
-INFO[0180] Create host key                              
-INFO[0180] Define VM                                    
-INFO[0180] Create boot volume                           
-INFO[0180] Create cloud-init volume                     
-INFO[0180] Start VM                                     
+INFO[0180] Create host key     
+INFO[0180] Define VM      
+INFO[0180] Create boot volume  
+INFO[0180] Create cloud-init volume      
+INFO[0180] Start VM  
 171
 08:04:47 root@pve03 vm ±|sam-custom ✗|→ 
 08:09:49 root@pve03 vm ±|sam-custom ✗|→ 
@@ -298,8 +335,8 @@ FATA[0000] ssh: handshake failed: ssh: host key mismatch
   virsh net-autostart default
   virsh net-list --all --persistent 
   # https://blog.csdn.net/weixin_30651273/article/details/99660277
-  net-dumpxml                  XML中的网络信息
-  net-define                   定义不活动的永久虚拟网络或从XML文件修改现有的永久虚拟网络
+  net-dumpxml   XML中的网络信息
+  net-define    定义不活动的永久虚拟网络或从XML文件修改现有的永久虚拟网络
 
 # VM-Persist: virter建后images在，但重启后vm列表丢失;
 # TODO
@@ -370,13 +407,13 @@ INFO[0000] Builtin image registry does not exist, writing to /root/.local/share/
 
 ```bash
 # bash-5.1# virter vm run --name barge-v215-sam105 --id 105 --wait-ssh barge215
-barge215 pull done         [ =========] 15.88MiB / 15.88MiB
+barge215 pull done    [ =========] 15.88MiB / 15.88MiB
 virter:layer:sha256:fbdd buffer layer done [  ========================] 15.88MiB / 15.88MiB
 virter:layer:sha256:fbdd upload layer done [  ========================] 15.88MiB / 15.88MiB
-INFO[0011] Create host key                              
-INFO[0011] Define VM                                    
-INFO[0012] Create boot volume                           
-INFO[0012] Create cloud-init volume                     
+INFO[0011] Create host key     
+INFO[0011] Define VM      
+INFO[0012] Create boot volume  
+INFO[0012] Create cloud-init volume      
 INFO[0012] Add DHCP entry from 52:54:00:00:00:69 to 192.168.122.105 
 # FATA[0013] Failed to start VM 105: could not add DHCP entry: Requested operation is not valid: cannot change persistent config of a transient network 
 ####cannot change persistent config of a transient network
@@ -401,22 +438,22 @@ Network default XML configuration edited.
 
 # Net/PoolPersist (Autostart> rm/操作后yes> 再重启则为no)
 bash-5.1# virsh pool-info default
-Name:           default
-UUID:           a5d1325c-f264-40d3-8802-c83c2bfb2ca3
-State:          running
+Name:      default
+UUID:      a5d1325c-f264-40d3-8802-c83c2bfb2ca3
+State:     running
 Persistent:     yes
 Autostart:      no
-Capacity:       12.00 GiB
+Capacity:  12.00 GiB
 Allocation:     5.24 GiB
 Available:      6.75 GiB
 
 # bash-5.1# id=107; virter vm run --name barge-v215-sam$id --id $id --wait-ssh barge215
-INFO[0000] Create host key                              
-INFO[0000] Define VM                                    
-INFO[0000] Create boot volume                           
-INFO[0000] Create cloud-init volume                     
+INFO[0000] Create host key     
+INFO[0000] Define VM      
+INFO[0000] Create boot volume  
+INFO[0000] Create cloud-init volume      
 INFO[0000] Add DHCP entry from 52:54:00:00:00:6b to 192.168.122.107 
-INFO[0001] Start VM                                     
+INFO[0001] Start VM  
 INFO[0008] Wait for VM to get ready  ##wait中，实际上可以进了；
 
 
@@ -433,7 +470,7 @@ $ ip a
 # 12: virbr0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
     link/ether 52:54:00:80:88:ab brd ff:ff:ff:ff:ff:ff
     inet 192.168.122.1/24 brd 192.168.122.255 scope global virbr0
-       valid_lft forever preferred_lft forever
+  valid_lft forever preferred_lft forever
 
 # root @ pve2372 in /opt/fk-docker-libvirtd |23:07:54  |sam-custom ?:6 ✗| 
 $ ping 192.168.122.107 
@@ -446,7 +483,7 @@ Welcome to Barge 2.15.0, Docker version 1.10.3, build 662b14f
 [bargee@barge ~]$ 
 
 # bash-5.1# virsh list --all --persistent
- Id   Name                State
+ Id   Name      State
 ------------------------------------
  1    barge-v215-sam107   running
  -    barge-v215-sam105   shut off
@@ -631,172 +668,172 @@ Welcome to Barge 2.15.0, Docker version 1.10.3, build 662b14f
 ```bash
 # bash-5.1# vt image
 Available Commands:
-  pull        Pull an image
-  push        Push an image
-  ls          List images
-  rm          Remove images
-  build       Build an image
-  load        Load an image
-  save        Save an image
-  prune       Prune unreferenced image layers
+  pull   Pull an image
+  push   Push an image
+  ls     List images
+  rm     Remove images
+  build  Build an image
+  load   Load an image
+  save   Save an image
+  prune  Prune unreferenced image layers
 
 # bash-5.1# vt network
 Available Commands:
-  add           Add a new network
-  ls            List available networks
-  rm            Remove a network
-  host          Network host related subcommands
+  add      Add a new network
+  ls  List available networks
+  rm  Remove a network
+  host     Network host related subcommands
   list-attached List VMs attached to a network
 
 # bash-5.1# vt vm
 Available Commands:
-  run         Start a virtual machine with a given image
-  rm          Remove virtual machines
-  cp          Copy files and directories from and to VM
-  ssh         Run an interactive ssh shell in a VM
-  exec        Run provisioning steps on VMs
+  run    Start a virtual machine with a given image
+  rm     Remove virtual machines
+  cp     Copy files and directories from and to VM
+  ssh    Run an interactive ssh shell in a VM
+  exec   Run provisioning steps on VMs
   exists      Check whether a VM exists
   commit      Commit a virtual machine
   host-key    Get the host key for a VM
 
 # 03:12:48 root@host23-69 libvirt ±|sam-custom ✗|→ vt vm run 
 Flags:
-      --arch arch                    CPU architecture to use. Will use kvm if host and VM use the same architecture (default amd64)
-      --bootcapacity unit            Capacity of the boot volume (values smaller than base image capacity will be ignored) (default 10G)
-  -c, --console string               Directory to save the VMs console outputs to
+      --arch arch     CPU architecture to use. Will use kvm if host and VM use the same architecture (default amd64)
+      --bootcapacity unit  Capacity of the boot volume (values smaller than base image capacity will be ignored) (default 10G)
+  -c, --console string     Directory to save the VMs console outputs to
       --container-pull-policy pull   Whether or not to pull container images used durign provisioning. Overrides the pull value of every provision step. Valid values: [Always, IfNotExist, Never]
-      --count uint                   Number of VMs to start (default 1)
-  -n, --name string                  name of new VM
-  -m, --memory unit                  Set amount of memory for the VM (default 1G) ###
-  -v, --mount stringArray            Mount a host path in the VM, like a bind mount. Format: "host=/path/on/host,vm=/path/in/vm" ###
-  -u, --user string                  Remote user for ssh session (default "root")
-      --vcpus uint                   Number of virtual CPUs to allocate for the VM (default 1)
+      --count uint    Number of VMs to start (default 1)
+  -n, --name string   name of new VM
+  -m, --memory unit   Set amount of memory for the VM (default 1G) ###
+  -v, --mount stringArray  Mount a host path in the VM, like a bind mount. Format: "host=/path/on/host,vm=/path/in/vm" ###
+  -u, --user string   Remote user for ssh session (default "root")
+      --vcpus uint    Number of virtual CPUs to allocate for the VM (default 1)
       --vm-pull-policy pullPolicy    Whether or not to pull the source image. Valid values: [Always, IfNotExist, Never] (default IfNotExist)
-      --vnc                          whether to configure VNC (remote GUI access) for the VM (defaults to false)
-      --vnc-bind-ip string           VNC IPv4 address to bind VNC listening socket to (default "127.0.0.1")
-      --vnc-port int                 VNC port. Defaults to 6000+id of this VM
-  -d, --disk stringArray             Add a disk to the VM. Format: "name=disk1,size=100MiB,format=qcow2,bus=virtio". Can be specified multiple times
-      --gdb-port uint                Enable gdb remote connection on this port (if --count is used, the ID will be added to this port number)
-  -i, --nic stringArray              Add a NIC to the VM. Format: "type=network,source=some-net-name". Type can also be "bridge", in which case the source is the bridge device name. Additional config options are "model" (default: virtio) and "mac" (default chosen by libvirt). Can be specified multiple times
-  -p, --provision string             name of toml file containing provisioning steps
-      --pull-policy pullPolicy       Whether or not to pull the source image. (default IfNotExist)
-      --secure-boot                  whether to enable secure boot
-  -s, --set stringArray              set/override provisioning steps
-  -w, --wait-ssh                     whether to wait for SSH port (default false)
-  -h, --help                         help for run
-      --id uint                      ID for VM which determines the IP address
+      --vnc      whether to configure VNC (remote GUI access) for the VM (defaults to false)
+      --vnc-bind-ip string      VNC IPv4 address to bind VNC listening socket to (default "127.0.0.1")
+      --vnc-port int  VNC port. Defaults to 6000+id of this VM
+  -d, --disk stringArray   Add a disk to the VM. Format: "name=disk1,size=100MiB,format=qcow2,bus=virtio". Can be specified multiple times
+      --gdb-port uint      Enable gdb remote connection on this port (if --count is used, the ID will be added to this port number)
+  -i, --nic stringArray    Add a NIC to the VM. Format: "type=network,source=some-net-name". Type can also be "bridge", in which case the source is the bridge device name. Additional config options are "model" (default: virtio) and "mac" (default chosen by libvirt). Can be specified multiple times
+  -p, --provision string   name of toml file containing provisioning steps
+      --pull-policy pullPolicy  Whether or not to pull the source image. (default IfNotExist)
+      --secure-boot   whether to enable secure boot
+  -s, --set stringArray    set/override provisioning steps
+  -w, --wait-ssh      whether to wait for SSH port (default false)
+  -h, --help     help for run
+      --id uint  ID for VM which determines the IP address
 ```
 
 **virsh-cmds**
 
 ```bash
 #  Domain Management (help keyword 'domain')
-    attach-device                  attach device from an XML file
-    attach-disk                    attach disk device
-    attach-interface               attach network interface
-    autostart                      autostart a domain
-    blkdeviotune                   Set or query a block device I/O tuning parameters.
-    blkiotune                      Get or set blkio parameters
-    blockcommit                    Start a block commit operation.
-    blockcopy                      Start a block copy operation.
-    blockjob                       Manage active block operations
-    blockpull                      Populate a disk from its backing image.
-    blockresize                    Resize block device of domain.
-    change-media                   Change media of CD or floppy drive
-    console                        connect to the guest console
-    cpu-stats                      show domain cpu statistics
-    # create                         create a domain from an XML file
-    # define                         define (but don't start) a domain from an XML file
-    # destroy                        destroy (stop) a domain
-    desc                           show or set domain\'s description or title
-    detach-device                  detach device from an XML file
-    detach-device-alias            detach device from an alias
-    detach-disk                    detach disk device
-    detach-interface               detach network interface
-      domdisplay                     domain display connection URI
-      domfsfreeze                    Freeze domain\'s mounted filesystems.
-      domfsthaw                      Thaw domain\'s mounted filesystems.
-      domfsinfo                      Get information of domain\'s mounted filesystems.
-      domfstrim                      Invoke fstrim on domain\'s mounted filesystems.
-      domhostname                    print the domain\'s hostname
-      domid                          convert a domain name or UUID to domain id
-      domif-setlink                  set link state of a virtual interface
-      domiftune                      get/set parameters of a virtual interface
-      domjobabort                    abort active domain job
-      domjobinfo                     domain job information
-      domname                        convert a domain id or UUID to domain name
-      domrename                      rename a domain
-      dompmsuspend                   suspend a domain gracefully using power management functions
-      dompmwakeup                    wakeup a domain from pmsuspended state
-      domuuid                        convert a domain name or id to domain UUID
-      domxml-from-native             Convert native config to domain XML
-      domxml-to-native               Convert domain XML to native config
-    dump                           dump the core of a domain to a file for analysis
-    dumpxml                        domain information in XML
-    edit                           edit XML configuration for a domain
-    event                          Domain Events
-    get-user-sshkeys               list authorized SSH keys for given user (via agent)
-    inject-nmi                     Inject NMI to the guest
-    send-key                       Send keycodes to the guest
-    send-process-signal            Send signals to processes
-    lxc-enter-namespace            LXC Guest Enter Namespace
-      iothreadinfo                   view domain IOThreads
-      iothreadpin                    control domain IOThread affinity
-      iothreadadd                    add an IOThread to the guest domain
-      iothreadset                    modifies an existing IOThread of the guest domain
-      iothreaddel                    delete an IOThread from the guest domain
-      managedsave                    managed save of a domain state
-      managedsave-remove             Remove managed save of a domain
-      managedsave-edit               edit XML for a domain\'s managed save state file
-      managedsave-dumpxml            Domain information of managed save state file in XML
-      managedsave-define             redefine the XML for a domain\'s managed save state file
-      migrate                        migrate domain to another host
-      migrate-setmaxdowntime         set maximum tolerable downtime
-      migrate-getmaxdowntime         get maximum tolerable downtime
-      migrate-compcache              get/set compression cache size
-      migrate-setspeed               Set the maximum migration bandwidth
-      migrate-getspeed               Get the maximum migration bandwidth
-      migrate-postcopy               Switch running migration from pre-copy to post-copy
-      qemu-attach                    QEMU Attach
-      qemu-monitor-command           QEMU Monitor Command
-      qemu-monitor-event             QEMU Monitor Events
-      qemu-agent-command             QEMU Guest Agent Command
-      guest-agent-timeout            Set the guest agent timeout
-    save                           save a domain state to a file
-    save-image-define              redefine the XML for a domain\'s saved state file
-    save-image-dumpxml             saved state domain information in XML
-    save-image-edit                edit XML for a domain\'s saved state file
-    memtune                        Get or set memory parameters
-    perf                           Get or set perf event
-    metadata                       show or set domain\'s custom XML metadata
-    numatune                       Get or set numa parameters
-      # reboot                         reboot a domain
-      # reset                          reset a domain
-      # restore                        restore a domain from a saved state in a file
-      # resume                         resume a domain
-    schedinfo                      show/set scheduler parameters
-    screenshot                     take a screenshot of a current domain console and store it into a file
-    set-lifecycle-action           change lifecycle actions
-    # set-user-sshkeys               manipulate authorized SSH keys file for given user (via agent)
-    # set-user-password              set the user password inside the domain
-    # setmaxmem                      change maximum memory limit
-    # setmem                         change memory allocation
-    # setvcpus                       change number of virtual CPUs
-    # shutdown                       gracefully shutdown a domain
-    # start                          start a (previously defined) inactive domain
-    # suspend                        suspend a domain
-    ttyconsole                     tty console
-    undefine                       undefine a domain
-    update-device                  update device from an XML file
-      vcpucount                      domain vcpu counts
-      vcpuinfo                       detailed domain vcpu information
-      vcpupin                        control or query domain vcpu affinity
-    emulatorpin                    control or query domain emulator affinity
-    vncdisplay                     vnc display
-    guestvcpus                     query or modify state of vcpu in the guest (via agent)
-    setvcpu                        attach/detach vcpu or groups of threads
-    domblkthreshold                set the threshold for block-threshold event for a given block device or it\'s backing chain element
-    guestinfo                      query information about the guest (via agent)
+    attach-device   attach device from an XML file
+    attach-disk     attach disk device
+    attach-interface     attach network interface
+    autostart  autostart a domain
+    blkdeviotune    Set or query a block device I/O tuning parameters.
+    blkiotune  Get or set blkio parameters
+    blockcommit     Start a block commit operation.
+    blockcopy  Start a block copy operation.
+    blockjob   Manage active block operations
+    blockpull  Populate a disk from its backing image.
+    blockresize     Resize block device of domain.
+    change-media    Change media of CD or floppy drive
+    console    connect to the guest console
+    cpu-stats  show domain cpu statistics
+    # create     create a domain from an XML file
+    # define     define (but don't start) a domain from an XML file
+    # destroy    destroy (stop) a domain
+    desc  show or set domain\'s description or title
+    detach-device   detach device from an XML file
+    detach-device-alias  detach device from an alias
+    detach-disk     detach disk device
+    detach-interface     detach network interface
+      domdisplay      domain display connection URI
+      domfsfreeze     Freeze domain\'s mounted filesystems.
+      domfsthaw  Thaw domain\'s mounted filesystems.
+      domfsinfo  Get information of domain\'s mounted filesystems.
+      domfstrim  Invoke fstrim on domain\'s mounted filesystems.
+      domhostname     print the domain\'s hostname
+      domid      convert a domain name or UUID to domain id
+      domif-setlink   set link state of a virtual interface
+      domiftune  get/set parameters of a virtual interface
+      domjobabort     abort active domain job
+      domjobinfo      domain job information
+      domname    convert a domain id or UUID to domain name
+      domrename  rename a domain
+      dompmsuspend    suspend a domain gracefully using power management functions
+      dompmwakeup     wakeup a domain from pmsuspended state
+      domuuid    convert a domain name or id to domain UUID
+      domxml-from-native   Convert native config to domain XML
+      domxml-to-native     Convert domain XML to native config
+    dump  dump the core of a domain to a file for analysis
+    dumpxml    domain information in XML
+    edit  edit XML configuration for a domain
+    event      Domain Events
+    get-user-sshkeys     list authorized SSH keys for given user (via agent)
+    inject-nmi      Inject NMI to the guest
+    send-key   Send keycodes to the guest
+    send-process-signal  Send signals to processes
+    lxc-enter-namespace  LXC Guest Enter Namespace
+      iothreadinfo    view domain IOThreads
+      iothreadpin     control domain IOThread affinity
+      iothreadadd     add an IOThread to the guest domain
+      iothreadset     modifies an existing IOThread of the guest domain
+      iothreaddel     delete an IOThread from the guest domain
+      managedsave     managed save of a domain state
+      managedsave-remove   Remove managed save of a domain
+      managedsave-edit     edit XML for a domain\'s managed save state file
+      managedsave-dumpxml  Domain information of managed save state file in XML
+      managedsave-define   redefine the XML for a domain\'s managed save state file
+      migrate    migrate domain to another host
+      migrate-setmaxdowntime    set maximum tolerable downtime
+      migrate-getmaxdowntime    get maximum tolerable downtime
+      migrate-compcache    get/set compression cache size
+      migrate-setspeed     Set the maximum migration bandwidth
+      migrate-getspeed     Get the maximum migration bandwidth
+      migrate-postcopy     Switch running migration from pre-copy to post-copy
+      qemu-attach     QEMU Attach
+      qemu-monitor-command      QEMU Monitor Command
+      qemu-monitor-event   QEMU Monitor Events
+      qemu-agent-command   QEMU Guest Agent Command
+      guest-agent-timeout  Set the guest agent timeout
+    save  save a domain state to a file
+    save-image-define    redefine the XML for a domain\'s saved state file
+    save-image-dumpxml   saved state domain information in XML
+    save-image-edit      edit XML for a domain\'s saved state file
+    memtune    Get or set memory parameters
+    perf  Get or set perf event
+    metadata   show or set domain\'s custom XML metadata
+    numatune   Get or set numa parameters
+      # reboot     reboot a domain
+      # reset      reset a domain
+      # restore    restore a domain from a saved state in a file
+      # resume     resume a domain
+    schedinfo  show/set scheduler parameters
+    screenshot      take a screenshot of a current domain console and store it into a file
+    set-lifecycle-action      change lifecycle actions
+    # set-user-sshkeys     manipulate authorized SSH keys file for given user (via agent)
+    # set-user-password    set the user password inside the domain
+    # setmaxmem  change maximum memory limit
+    # setmem     change memory allocation
+    # setvcpus   change number of virtual CPUs
+    # shutdown   gracefully shutdown a domain
+    # start      start a (previously defined) inactive domain
+    # suspend    suspend a domain
+    ttyconsole      tty console
+    undefine   undefine a domain
+    update-device   update device from an XML file
+      vcpucount  domain vcpu counts
+      vcpuinfo   detailed domain vcpu information
+      vcpupin    control or query domain vcpu affinity
+    emulatorpin     control or query domain emulator affinity
+    vncdisplay      vnc display
+    guestvcpus      query or modify state of vcpu in the guest (via agent)
+    setvcpu    attach/detach vcpu or groups of threads
+    domblkthreshold      set the threshold for block-threshold event for a given block device or it\'s backing chain element
+    guestinfo  query information about the guest (via agent)
 ```
 
 
