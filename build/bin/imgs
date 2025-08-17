@@ -1,0 +1,5 @@
+#!/bin/bash
+
+vt image ls --available |grep -v "^Name" |awk '{print $1}' |while read one; do 
+  echo "vt image pull $one hkccr.ccs.tencentyun.com/infrastlabs/vm-images:$one"; 
+done
