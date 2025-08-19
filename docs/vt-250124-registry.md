@@ -5,16 +5,16 @@
 ```bash
 root @ armbian in .../local/libvirt |11:53:52  |sam-custom U:2 ?:9 ?. 
 $ vt image ls
-Name                Top Layer                                                                Created       
-alpine              sha256:584760a4809c9d27ead880a549733db5adeb8da445a702d19099e5eaa2b605a9  19 hours ago  
-barge214x           sha256:355685a6bee55e945239b282a0c75786ba8a7d3f8a67b50496e1912fa17aae60  46 hours ago  
-deb-12-arm64        sha256:0a4972c17b60d56504069ffd2846fa135210b51850e5cb020089b2cf1b231126  19 hours ago  
+Name    Top Layer    Created       
+alpine  sha256:584760a4809c9d27ead880a549733db5adeb8da445a702d19099e5eaa2b605a9  19 hours ago  
+barge214x     sha256:355685a6bee55e945239b282a0c75786ba8a7d3f8a67b50496e1912fa17aae60  46 hours ago  
+deb-12-arm64  sha256:0a4972c17b60d56504069ffd2846fa135210b51850e5cb020089b2cf1b231126  19 hours ago  
 debian-10-arm64     sha256:9c76240d75ae9fe1ed855c3f930c0a3ef50d8b9181881032f53107dce6efbcf5  24 hours ago  
 ubuntu-focal-arm64  sha256:23bb59a11a87596c701ad2acf128eee80541461616dc0f361597a5b63b01cac1  25 hours ago  
 
 root @ armbian in .../local/libvirt |11:54:52  |sam-custom U:2 ?:9 ?. 
 $ vt image push alpine harbor.pcitech.com/base/virt-alpine:latest
-FATA[0000] not allowed to push                           error="creating push check transport for harbor.pcitech.com failed: Get \"https://harbor.pcitech.com/v2/\": dial tcp: lookup harbor.pcitech.com on 114.114.114.114:53: no such host"
+FATA[0000] not allowed to push   error="creating push check transport for harbor.pcitech.com failed: Get \"https://harbor.pcitech.com/v2/\": dial tcp: lookup harbor.pcitech.com on 114.114.114.114:53: no such host"
 
 
 # 初始ca, .docker/config.json
@@ -27,7 +27,7 @@ main: line 117: docker: command not found
 
 root @ armbian in .../local/libvirt |11:56:48  |sam-custom U:2 ?:9 ?. 
 $ vt image push alpine harbor.pcitech.com/base/virt-alpine:latest
-FATA[0000] not allowed to push                           error="creating push check transport for harbor.pcitech.com failed: Get \"https://harbor.pcitech.com/v2/\": tls: failed to verify certificate: x509: certificate signed by unknown authority"  ##/etc/docker/certs.d/harbor.pcitech.com/ca.crt无效; TODO /etc/trusted-ca..
+FATA[0000] not allowed to push   error="creating push check transport for harbor.pcitech.com failed: Get \"https://harbor.pcitech.com/v2/\": tls: failed to verify certificate: x509: certificate signed by unknown authority"  ##/etc/docker/certs.d/harbor.pcitech.com/ca.crt无效; TODO /etc/trusted-ca..
 
 ```
 
@@ -43,13 +43,13 @@ root @ deb1013 in ~ |09:22:39
     -----BEGIN CERTIFICATE-----
     MIIDpDCCAoygAwIBAgIUAfr7FX5mAHhc2ztvlgtJc+HegGQwDQYJKoZIhvcNAQEL
     -----END CERTIFICATE-----
-  $ mkdir -p /etc/ssl/certs; cat  /etc/docker/certs.d/harbor.pcitech.com/ca.crt  > /etc/ssl/certs/harbor115-ca.pem
+  # $ mkdir -p /etc/ssl/certs; cat  /etc/docker/certs.d/harbor.pcitech.com/ca.crt  > /etc/ssl/certs/harbor115-ca.pem
   root @ deb1013 in ~ |09:27:08  
   $ vt image push debian-10 harbor.pcitech.com/infrastlabs/vm-images:debian-10
-  FATA[0000] not allowed to push                           error="POST https://harbor.pcitech.com/v2/infrastlabs/vm-images/blobs/uploads/: UNAUTHORIZED: project infrastlabs not found: project infrastlabs not found" #ns不存在
+  FATA[0000] not allowed to push   error="POST https://harbor.pcitech.com/v2/infrastlabs/vm-images/blobs/uploads/: UNAUTHORIZED: project infrastlabs not found: project infrastlabs not found" #ns不存在
   root @ armbian in ~ |13:50:39  
   $ vt image push alpine-v320-arm64 harbor.pcitech.com/base/vm-images:alpine-v320-arm64
-  FATA[0000] not allowed to push                           error="POST https://harbor.pcitech.com/v2/base/vm-images/blobs/uploads/: UNAUTHORIZED: unauthorized to access repository: base/vm-images, action: push: unauthorized to access repository: base/vm-images, action: push" #未auth
+  FATA[0000] not allowed to push   error="POST https://harbor.pcitech.com/v2/base/vm-images/blobs/uploads/: UNAUTHORIZED: unauthorized to access repository: base/vm-images, action: push: unauthorized to access repository: base/vm-images, action: push" #未auth
 
 # auth
 mkdir -p ~/.docker; dockconf=~/.docker/config.json
@@ -78,8 +78,8 @@ MOD_UNDOCK_AUTH="$(echo admin:suntek |tr -d '\n' |base64)"
 root @ deb1013 in ~ |09:18:47  
 $ vt image push debian-10 registry.cn-shenzhen.aliyuncs.com/infrastlabs/vm-images:debian-10
 sha256:913c245aac3642cfb compress done [====] 282.41MiB / 282.41MiB
-sha256:913c245aac3642cfb push          [======>------------------] 90.00MiB / 280.51MiB
-FATA[0072] failed to push image        error="PUT https://registry.cn-shenzhen.aliyuncs.com/v2/infrastlabs/vm-images/manifests/debian-10: DENIED: unknown manifest class for application/vnd.com.linbit.virter.image.v1"
+sha256:913c245aac3642cfb push    [======>------------------] 90.00MiB / 280.51MiB
+FATA[0072] failed to push image  error="PUT https://registry.cn-shenzhen.aliyuncs.com/v2/infrastlabs/vm-images/manifests/debian-10: DENIED: unknown manifest class for application/vnd.com.linbit.virter.image.v1"
 ```
 
 - harbor115-certs,pushOK
@@ -139,17 +139,17 @@ $ vt image ls |awk '{print $1}' |grep -v "^Name$" |while read one; do echo $one;
 root @ host-172-25-21-18 in ~ |10:12:33  
 $ echo "alma-8,alpine-v320,barge214c,barge214d,barge214x,cirros-v063,debian-10,debian-11,openeuler-v24,rocky-8,rocky-9,ubuntu-v20" |tr ',' '\n' |while read one; do echo $one; vt image pull $one harbor.pcitech.com/base/vm-images:$one; done
   alma-8
-  sha256:669bd580dcef5491d pull done         [========================] 671.38MiB / 671.38MiB
+  sha256:669bd580dcef5491d pull done   [========================] 671.38MiB / 671.38MiB
   virter:layer:sha256:669b buffer layer done [========================] 678.56MiB / 678.56MiB
   virter:layer:sha256:669b upload layer done [========================] 678.56MiB / 678.56MiB
   Pulled alma-8
   alpine-v320
-  sha256:0947c391f5bf4f305 pull done         [========================] 108.14MiB / 108.14MiB
+  sha256:0947c391f5bf4f305 pull done   [========================] 108.14MiB / 108.14MiB
   virter:layer:sha256:0947 buffer layer done [========================] 178.12MiB / 178.12MiB
   virter:layer:sha256:0947 upload layer done [========================] 178.12MiB / 178.12MiB
   Pulled alpine-v320
   barge214c
-  sha256:fd01527eae851f763 pull done         [==========================] 13.23MiB / 13.23MiB
+  sha256:fd01527eae851f763 pull done   [==========================] 13.23MiB / 13.23MiB
   virter:layer:sha256:fd01 buffer layer done [==========================] 15.12MiB / 15.12MiB
   virter:layer:sha256:fd01 upload layer done [==========================] 15.12MiB / 15.12MiB
   Pulled barge214c
@@ -165,7 +165,7 @@ $ echo "alma-8,alpine-v320,barge214c,barge214d,barge214x,cirros-v063,debian-10,d
 
 root @ armbian in ~ |13:50:39  
   $ vt image push alpine-v320-arm64 harbor.pcitech.com/base/vm-images:alpine-v320-arm64
-  FATA[0000] not allowed to push                           error="POST https://harbor.pcitech.com/v2/base/vm-images/blobs/uploads/: UNAUTHORIZED: unauthorized to access repository: base/vm-images, action: push: unauthorized to access repository: base/vm-images, action: push"
+  FATA[0000] not allowed to push   error="POST https://harbor.pcitech.com/v2/base/vm-images/blobs/uploads/: UNAUTHORIZED: unauthorized to access repository: base/vm-images, action: push: unauthorized to access repository: base/vm-images, action: push"
   $ vt image push alpine-v320-arm64 harbor.pcitech.com/base/vm-images:alpine-v320-arm64
   sha256:584760a4809c9d27e compress done [============] 212.38MiB / 212.38MiB
   sha256:584760a4809c9d27e push done     [============] 109.01MiB / 109.01MiB
@@ -212,17 +212,17 @@ root @ armbian in ~ |13:52:30
   root @ host-172-25-21-18 in ~ |10:12:33  
   $ echo "alma-9-arm64,alpine-v320-arm64,cirros-v063-arm64,debian-11-arm64,openeuler-v24-arm64,rocky-9-arm64,ubuntu-v20-arm64" |tr ',' '\n' |while read one; do echo $one; vt image pull $one harbor.pcitech.com/base/vm-images:$one; done
     alma-9-arm64
-    sha256:5ede4affaad0a997a pull done         [===] 380.26MiB / 380.26MiB
+    sha256:5ede4affaad0a997a pull done   [===] 380.26MiB / 380.26MiB
     virter:layer:sha256:5ede buffer layer done [===] 383.00MiB / 383.00MiB
     virter:layer:sha256:5ede upload layer done [===] 383.00MiB / 383.00MiB
     Pulled alma-9-arm64
     alpine-v320-arm64
-    sha256:584760a4809c9d27e pull done         [===] 109.01MiB / 109.01MiB
+    sha256:584760a4809c9d27e pull done   [===] 109.01MiB / 109.01MiB
     virter:layer:sha256:5847 buffer layer done [===] 212.38MiB / 212.38MiB
     virter:layer:sha256:5847 upload layer done [===] 212.38MiB / 212.38MiB
     Pulled alpine-v320-arm64
     cirros-v063-arm64
-    sha256:611879b8299363fe6 pull done         [=====] 23.51MiB / 23.51MiB
+    sha256:611879b8299363fe6 pull done   [=====] 23.51MiB / 23.51MiB
     virter:layer:sha256:6118 buffer layer done [=====] 24.00MiB / 24.00MiB
     virter:layer:sha256:6118 upload layer done [=====] 24.00MiB / 24.00MiB
     Pulled cirros-v063-arm64
@@ -230,20 +230,220 @@ root @ armbian in ~ |13:52:30
     sha256:f84198324eb8ebc7a pull done [===========] 248.66MiB / 248.66MiB
     Pulled debian-11-arm64
     openeuler-v24-arm64
-    sha256:e151e6e173e4af1b2 pull done         [===] 740.76MiB / 740.76MiB
+    sha256:e151e6e173e4af1b2 pull done   [===] 740.76MiB / 740.76MiB
     virter:layer:sha256:e151 buffer layer done [=======] 1.53GiB / 1.53GiB
     virter:layer:sha256:e151 upload layer done [=======] 1.53GiB / 1.53GiB
     Pulled openeuler-v24-arm64
     rocky-9-arm64
-    sha256:5443bcc0507fadc3d pull done         [==================] 491.06MiB / 491.06MiB
+    sha256:5443bcc0507fadc3d pull done   [==================] 491.06MiB / 491.06MiB
     virter:layer:sha256:5443 buffer layer done [==================] 493.94MiB / 493.94MiB
     virter:layer:sha256:5443 upload layer done [==================] 493.94MiB / 493.94MiB
     Pulled rocky-9-arm64
     ubuntu-v20-arm64
-    sha256:23bb59a11a87596c7 pull done         [==================] 578.05MiB / 578.05MiB
+    sha256:23bb59a11a87596c7 pull done   [==================] 578.05MiB / 578.05MiB
     virter:layer:sha256:23bb buffer layer done [==================] 579.92MiB / 579.92MiB
     virter:layer:sha256:23bb upload layer done [==================] 579.92MiB / 579.92MiB
     Pulled ubuntu-v20-arm64
 ```
 
+### 3）hkccr.Push
 
+- hkccr@25.8.19 OK
+
+```bash
+root @ deb11-11 in ~ |17:12:14  
+$ cp -a /_ext/.docker/ /root/
+  '/_ext/.docker/' -> '/root/.docker'
+  '/_ext/.docker/config.json' -> '/root/.docker/config.json'
+root @ deb11-11 in ~ |17:13:09  
+$ vt image push cirros-v063 hkccr.ccs.tencentyun.com/infrastlabs/vm-images:cirros-v063
+  sha256:7d6355852aeb6dbcd compress done [==========] 20.69MiB / 20.69MiB
+  sha256:7d6355852aeb6dbcd push done     [==========] 20.21MiB / 20.21MiB
+  Pushed hkccr.ccs.tencentyun.com/infrastlabs/vm-images:cirros-v063
+```
+
+- allPull +ppc64
+
+```bash
+# tryAll.http
+17  2025-08-19 17:20:29 vt image ls --available 
+18  2025-08-19 17:20:37 vt image ls --available |awk '{print $1}' |while read one; do vt image pull $one; done
+# harborFirst
+19  2025-08-19 17:22:53 cp /_ext/docker /bin/
+20  2025-08-19 17:22:55 docker 
+21  2025-08-19 17:23:00 curl -fSL -o- http://172.25.23.205:82/sam/docs-devops/raw/branch/dev/settings/harbor/regcert.sh |bash -s
+22  2025-08-19 17:23:06 cat .docker/config.json 
+# 
+root @ deb11-11 in ~ |17:23:34  
+$ mkdir -p /etc/ssl/certs; cat  /etc/docker/certs.d/harbor.pcitech.com/ca.crt  > /etc/ssl/certs/harbor115-ca.pem
+echo "alma-8,alpine-v320,barge214c,barge214d,barge214x,cirros-v063,debian-10,debian-11,openeuler-v24,rocky-8,rocky-9,ubuntu-v20" |tr ',' '\n' |while read one; do echo $one; vt image pull $one harbor.pcitech.com/base/vm-images:$one; done
+echo "alma-9-arm64,alpine-v320-arm64,cirros-v063-arm64,debian-11-arm64,openeuler-v24-arm64,rocky-9-arm64,ubuntu-v20-arm64" |tr ',' '\n' |while read one; do echo $one; vt image pull $one harbor.pcitech.com/base/vm-images:$one; done
+
+
+# ubt-mirror
+root @ deb11-11 in ~/.config/virter |10:09:32  
+$ vt image ls --available |grep ubuntu |awk '{print $2}' |sort #while read one; do vt image pull $one; done 
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/bionic/current/bionic-server-cloudimg-amd64.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/focal/current/focal-server-cloudimg-amd64-disk-kvm.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/focal/current/focal-server-cloudimg-arm64.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/focal/current/focal-server-cloudimg-ppc64el.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/jammy/current/jammy-server-cloudimg-amd64-disk-kvm.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/noble/current/noble-server-cloudimg-amd64.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/noble/current/noble-server-cloudimg-arm64.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/noble/current/noble-server-cloudimg-ppc64el.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/xenial/current/xenial-server-cloudimg-amd64-uefi1.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/xenial/current/xenial-server-cloudimg-arm64-uefi1.img
+https://mirrors.huaweicloud.com/ubuntu-cloud-images/xenial/current/xenial-server-cloudimg-ppc64el-disk1.img
+```
+
+- allPush
+
+```bash
+# $one hkccr.ccs.tencentyun.com/infrastlabs/vm-images:$one;
+root @ deb11-11 in ~ |17:32:04  
+$ vt image ls |grep arm64 |awk '{print $1}' |while read one; do vt image push $one hkccr.ccs.tencentyun.com/infrastlabs/vm-images:$one; done
+
+$ vt image ls |grep ppc64 |awk '{print $1}' |while read one; do vt image push $one hkccr.ccs.tencentyun.com/infrastlabs/vm-images:$one; done
+
+
+$ vt image ls |egrep -v "^Name|arm64|ppc64" |awk '{print $1}' |while read one; do vt image push $one hkccr.ccs.tencentyun.com/infrastlabs/vm-images:$one; done
+
+```
+
+- full --available
+
+```bash
+# root @ deb11-11 in ~ |17:38:26  
+$ vt image ls --available |grep ppc64 |wc
+      9      18    1413
+$ vt image ls --available |grep arm64 |wc
+     18      36    2826
+$ vt image ls --available |egrep -v "^Name|arm64|ppc64" |wc
+     27      54    4239
+
+root @ deb11-11 in ~ |17:39:51  
+# $ vt image ls --available |grep ppc64 
+  alma-8-ppc64   https://repo.almalinux.org/almalinux/8/cloud/ppc64le/images/AlmaLinux-8-GenericCloud-latest.ppc64le.qcow2      
+  alma-9-ppc64   https://repo.almalinux.org/almalinux/9/cloud/ppc64le/images/AlmaLinux-9-GenericCloud-latest.ppc64le.qcow2      
+  centos-8-ppc64       https://cloud.centos.org/centos/8/ppc64le/images/CentOS-8-GenericCloud-8.4.2105-20210603.0.ppc64le.qcow2       
+  cirros-v063-ppc64    https://gitee.com/g-system/fk-barge-packer/releases/download/v23.0514/cirros-0.6.3-ppc64le-disk.img      
+  debian-12-ppc64      https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-ppc64el.qcow2  
+  rocky-9-ppc64  https://download.rockylinux.org/pub/rocky/9/images/ppc64le/Rocky-9-GenericCloud.latest.ppc64le.qcow2     
+  ubuntu-v16-ppc64     https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-ppc64el-disk1.img      
+  ubuntu-v20-ppc64     https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-ppc64el.img  
+  ubuntu-v24-ppc64     https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-ppc64el.img  
+
+# $ vt image ls --available |grep arm64 
+  alma-8-arm64   https://repo.almalinux.org/almalinux/8/cloud/aarch64/images/AlmaLinux-8-GenericCloud-latest.aarch64.qcow2      
+  alma-9-arm64   https://repo.almalinux.org/almalinux/9/cloud/aarch64/images/AlmaLinux-9-GenericCloud-latest.aarch64.qcow2      
+  alpine-v320-arm64    https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/cloud/nocloud_alpine-3.20.0-aarch64-uefi-cloudinit-r0.qcow2     
+  armbian-v22-arm64    http://172.29.40.253:81/2501/qcow/2025-01-10-12-24-48-sdk-Armbian_24.11.2_Uefi-arm64_jammy_current_6.6.69-sdk.img.qcow2    
+  centos-8-arm64       https://cloud.centos.org/centos/8/aarch64/images/CentOS-8-GenericCloud-8.4.2105-20210603.0.aarch64.qcow2       
+  cirros-v063-arm64    https://gitee.com/g-system/fk-barge-packer/releases/download/v23.0514/cirros-0.6.3-aarch64-disk.img      
+  debian-10-arm64      https://cloud.debian.org/images/cloud/buster/latest/debian-10-generic-arm64.qcow2      
+  debian-11-arm64      https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-genericcloud-arm64.qcow2     
+  debian-12-arm64      https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-arm64.qcow2     
+  openeuler-v22-arm64  http://172.29.40.253:81/2501/qcow/openEuler-22.03-LTS-SP4-aarch64.qcow2    
+  openeuler-v24-arm64  http://172.29.40.253:81/2501/qcow/openEuler-24.03-LTS-SP1-aarch64.qcow2    
+  opensuse-micro-v61-arm64   https://download.opensuse.org/distribution/leap-micro/6.1/appliances/openSUSE-Leap-Micro.aarch64-Default-qcow.qcow2  
+  ophub-armbian-deb11-arm64  http://172.29.40.253:81/2501/qcow/2025-01-10-14-35-48-amlogic-s9xxx-armbian-Armbian_25.02.0-trunk_5.02.0-deb11-bullseye.img      
+  ophub-armbian-ubt24-arm64  http://172.29.40.253:81/2501/qcow/2025-01-10-12-36-06-amlogic-s9xxx-armbian-Armbian_25.02.0-trunk_5.02.0-ubt24-noble.img   
+  rocky-9-arm64  https://download.rockylinux.org/pub/rocky/9/images/aarch64/Rocky-9-GenericCloud.latest.aarch64.qcow2     
+  ubuntu-v16-arm64     https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-arm64-uefi1.img  
+  ubuntu-v20-arm64     https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-arm64.img    
+  ubuntu-v24-arm64     https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-arm64.img    
+
+# $ vt image ls --available |egrep -v "^Name|arm64|ppc64"    
+  alma-8   https://repo.almalinux.org/almalinux/8/cloud/x86_64/images/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2  
+  alma-9   https://repo.almalinux.org/almalinux/9/cloud/x86_64/images/AlmaLinux-9-GenericCloud-latest.x86_64.qcow2  
+  alpine-v320    https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/cloud/nocloud_alpine-3.20.3-x86_64-bios-cloudinit-r0.qcow2      
+  amazonlinux-2  https://cdn.amazonlinux.com/os-images/2.0.20241217.0/kvm/amzn2-kvm-2.0.20241217.0-x86_64.xfs.gpt.qcow2   
+  amazonlinux-2023     https://cdn.amazonlinux.com/al2023/os-images/2023.6.20241212.0/kvm/al2023-kvm-2023.6.20241212.0-kernel-6.1-x86_64.xfs.gpt.qcow2  
+  armbian-v22    http://172.29.40.253:81/2501/qcow/2025-01-10-12-25-20-sdk-Armbian_24.11.2_Uefi-x86_jammy_current_6.6.69-sdk.img.qcow2      
+  barge214c      https://gitee.com/g-system/fk-barge-packer/releases/download/v23.0510/barge.qcow2      
+  barge214d      https://gitee.com/g-system/fk-barge-packer/releases/download/v23.0514/barge.qcow2      
+  barge214x      https://gitee.com/g-system/fk-barge-packer/releases/download/v23.0514/barge-x-v214-17.12.1-ce.qcow2      
+  centos-6       https://cloud.centos.org/centos/6/images/CentOS-6-x86_64-GenericCloud.qcow2      
+  centos-7       https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2      
+  centos-8       https://cloud.centos.org/centos/8/x86_64/images/CentOS-8-GenericCloud-8.4.2105-20210603.0.x86_64.qcow2   
+  cirros-v063    https://gitee.com/g-system/fk-barge-packer/releases/download/v23.0514/cirros-0.6.3-x86_64-disk.img       
+  debian-10      https://cloud.debian.org/images/cloud/buster/latest/debian-10-genericcloud-amd64.qcow2       
+  debian-11      https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-genericcloud-amd64.qcow2     
+  debian-12      https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2     
+  debian-9       https://cdimage.debian.org/cdimage/openstack/current-9/debian-9-openstack-amd64.qcow2  
+  openeuler-v22  http://172.29.40.253:81/2501/qcow/openEuler-22.03-LTS-SP4-x86_64.qcow2     
+  openeuler-v24  http://172.29.40.253:81/2501/qcow/openEuler-24.03-LTS-SP1-x86_64.qcow2     
+  opensuse-micro-v61   https://download.opensuse.org/distribution/leap-micro/6.1/appliances/openSUSE-Leap-Micro.x86_64-Default-qcow.qcow2   
+  rocky-8  https://download.rockylinux.org/pub/rocky/8/images/x86_64/Rocky-8-GenericCloud.latest.x86_64.qcow2       
+  rocky-9  https://download.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud.latest.x86_64.qcow2       
+  ubuntu-v16     https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-uefi1.img  
+  ubuntu-v18     https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img  
+  ubuntu-v20     https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64-disk-kvm.img       
+  ubuntu-v22     https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64-disk-kvm.img       
+  ubuntu-v24     https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+```
+
+- hkccr-exist1
+
+```bash
+root @ deb11-11 in ~ |17:40:20  
+$ cat hkccr-exist1|sed  's/^[ \t]*//;s/[ \t]*$//'  |egrep -v "Docker-I|2025|sha25|MB|GB|KB|^#|^$" |sort
+alma-8
+alma-8-ppc64
+alma-9
+alma-9-arm64
+alma-9-ppc64
+alpine-v320
+alpine-v320-arm64
+amazonlinux-2
+amazonlinux-2023
+armbian-v22
+barge214c
+barge214d
+barge214x
+centos-6
+centos-7
+centos-8
+centos-8-ppc64
+cirros-v063
+cirros-v063-arm64
+cirros-v063-ppc64
+debian-10
+debian-11
+debian-11-arm64
+debian-12
+debian-12-ppc64
+debian-9
+openeuler-v24
+openeuler-v24-arm64
+opensuse-micro-v61
+rocky-8
+rocky-9
+rocky-9-arm64
+rocky-9-ppc64
+ubuntu-v16
+ubuntu-v16-ppc64
+ubuntu-v20
+ubuntu-v20-arm64
+ubuntu-v20-ppc64
+ubuntu-v22
+ubuntu-v24-arm64
+ubuntu-v24-ppc64
+
+root @ deb11-11 in ~ |17:43:14  
+$ vt image ls |awk '{print $1}'  |while read one; do match1=$(cat hkccr-exist1-2 |grep "$one"); test -z "$match1" && echo  $one; done
+Name
+alma-8-arm64
+armbian-v22-arm64
+centos-8-arm64
+debian-10-arm64
+debian-12-arm64
+openeuler-v22-arm64
+opensuse-micro-v61-arm64
+ophub-armbian-deb11-arm64
+ophub-armbian-ubt24-arm64
+
+root @ deb11-11 in ~ |18:05:19  
+$ vt image ls --available|awk '{print $1}'  |while read one; do match1=$(vt image ls |awk '{print $1}' |egrep "$one$"); test -z "$match1" && echo  $one; done
+openeuler-v22
+```
