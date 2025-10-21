@@ -11,16 +11,19 @@ RUN apt.sh \
 # APP # LOCALE 15.0 MB 
 RUN apt.sh \
   # tzdata locales \
-  # [librsvg2-common]>> OK有效:免icons配置不生效<flux/openbox,xfce4>
+  # librsvg2-common:免icons配置不生效<flux/openbox,xfce4>
   librsvg2-common \
-  dunst plank scrot \
-  sakura geany thunar ristretto engrampa ; \
-  test "24.04" != "${VER}" && apt.sh leafpad; \
+  # sakura plank \
+  dunst scrot \
+  geany thunar ristretto engrampa ; \
+  # test "24.04" != "${VER}" && apt.sh leafpad; \
   exit 0
 
 
 # ohmybash
 RUN \
+  # dropbear
+  apt.sh supervisor git; \
   bash -c "$(wget https://gitee.com/g-system/oh-my-bash/raw/sam-custom/tools/install.sh -O -)"; \
   sed -i 's/OSH_THEME.*/OSH_THEME="axin"/g' /root/.bashrc; cat /root/.bashrc |grep axin; 
 
@@ -53,8 +56,7 @@ RUN \
 RUN apt.sh \
     qemu-system-x86 qemu-system-arm qemu-system-ppc qemu-utils ipxe-qemu \
     libvirt-daemon-system libvirt-clients virtinst \
-    bridge-utils seabios vgabios dnsmasq \
-    supervisor dropbear git; \
+    bridge-utils seabios vgabios dnsmasq; \
     # ubt24-none: qemu-efi gconf2
     test "24.04" != "${VER}" && apt.sh gconf2 qemu-efi; \
     exit 0
