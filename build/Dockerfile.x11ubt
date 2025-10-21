@@ -3,33 +3,21 @@ FROM registry.cn-shenzhen.aliyuncs.com/infrastlabs/x11-base:core-ubuntu-${VER}
 ARG TARGETPLATFORM
 ARG VER=20.04
 
-# virter-v0.24.0
-RUN \
-  case ${TARGETPLATFORM} in \
-    "linux/amd64")  arch=amd64    ;; \
-    "linux/arm64")  arch=arm64    ;; \
-    "linux/arm/v7") arch=arm      ;; \
-    "linux/ppc64le") arch=ppc64le   ;; \
-    "linux/arm/v6") arch=NONE_armel ;; \
-    "linux/386")    arch=NONE_i386  ;; \
-  esac; \
-  file=virter-linux-$arch; \
-  # https://github.com/infrastlabs/fk-virter/releases/download/v24.12/virter-linux-amd64 #none: xx-upx.tar.gz (err@23.2-kylin)
-  test -s $file || wget -O $file https://github.com/infrastlabs/fk-virter/releases/download/v24.12/$file; \
-  chmod +x $file; mv $file /bin/virter;
-
-
 # ICON
-RUN \
-  apt.sh \
+RUN apt.sh \
   hicolor-icon-theme adwaita-icon-theme humanity-icon-theme; \
   cd /usr/share/icons && rm -rf Humanity* ubuntu-mono* LoginIcons Tango; \
   exit 0
-# APP
-RUN \
-  apt.sh sakura geany thunar dunst ristretto plank engrampa scrot ; \
+# APP # LOCALE 15.0 MB 
+RUN apt.sh \
+  # tzdata locales \
+  # [librsvg2-common]>> OK有效:免icons配置不生效<flux/openbox,xfce4>
+  librsvg2-common \
+  dunst plank scrot \
+  sakura geany thunar ristretto engrampa ; \
   test "24.04" != "${VER}" && apt.sh leafpad; \
   exit 0
+
 
 # ohmybash
 RUN \
@@ -46,16 +34,30 @@ RUN \
 #     cd /usr/share/icons/hicolor/scalable/apps; rm -f asbru-cm.svg; ln -s /usr/local/asbru/res/asbru-logo.svg ./asbru-cm.svg; \
 #   dpkg -l |grep asbru && exit 0 || exit 1; 
 
+# virter-v0.24.0
+RUN \
+  case ${TARGETPLATFORM} in \
+    "linux/amd64")  arch=amd64    ;; \
+    "linux/arm64")  arch=arm64    ;; \
+    "linux/arm/v7") arch=arm      ;; \
+    "linux/ppc64le") arch=ppc64le   ;; \
+    "linux/arm/v6") arch=NONE_armel ;; \
+    "linux/386")    arch=NONE_i386  ;; \
+  esac; \
+  file=virter-linux-$arch; \
+  # https://github.com/infrastlabs/fk-virter/releases/download/v24.12/virter-linux-amd64 #none: xx-upx.tar.gz (err@23.2-kylin)
+  test -s $file || wget -O $file https://github.com/infrastlabs/fk-virter/releases/download/v24.12/$file; \
+  chmod +x $file; mv $file /bin/virter;
+
 # qemu,libvirt
 RUN apt.sh \
     qemu-system-x86 qemu-system-arm qemu-system-ppc qemu-utils ipxe-qemu \
     libvirt-daemon-system libvirt-clients virtinst \
     bridge-utils seabios vgabios dnsmasq \
-    supervisor dropbear git; 
-# ubt24-none: qemu-efi gconf2
-RUN \
-  test "24.04" != "${VER}" && apt.sh gconf2 qemu-efi; \
-  exit 0
+    supervisor dropbear git; \
+    # ubt24-none: qemu-efi gconf2
+    test "24.04" != "${VER}" && apt.sh gconf2 qemu-efi; \
+    exit 0
 RUN \
   sed -i 's/#user = "root"/user = "root"/' /etc/libvirt/qemu.conf; \
   sed -i 's/#group = "root"/group = "root"/' /etc/libvirt/qemu.conf; \
@@ -68,18 +70,11 @@ RUN \
   apt.sh virt-manager gobject-introspection; \
   cd /usr/local; git clone https://gitee.com/g-system/fk-virt-manager; 
 
-# LOCALE 15.0 MB 
-RUN \
-  # [librsvg2-common]>> OK有效:免icons配置不生效<flux/openbox,xfce4>
-  apt.sh tzdata locales librsvg2-common; \
-  exit 0
-
 ENV \
   TERM=xterm \
   SHELL=/bin/bash \
   # TIMEZONE=Asia/Shanghai \
   # LANG=C.UTF-8 \
-  # SSHD_ENABLE=true \
   SSHD_PORT=60022
 
   
