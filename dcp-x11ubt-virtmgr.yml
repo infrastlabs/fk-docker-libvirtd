@@ -1,0 +1,55 @@
+# version: '2.4' #dcp-v2.29.7: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion
+services:
+  x11ubt-virter:
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-alpine319
+    # image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-ubt2004
+    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-x11ubt2404
+    entrypoint: /bin/bash /srv/local/libvirt/build/entry.sh
+    restart: unless-stopped
+    privileged: true
+    network_mode: bridge #host bridge; non.host: avoid multi-inst-network-conflict
+    working_dir: /srv/local/libvirt
+    ports:
+      - 62122:60022
+    # https://gitlab.com/libvirt/libvirt/-/issues/163
+    # --cgroupns=host
+    # https://github.com/docker/compose/issues/8167
+    # pid: host
+    cgroup: host
+    tmpfs:
+      - /var/run
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - ./:/srv/local/libvirt
+      - ./data-x11ubt/var-lib-libvirt:/var/lib/libvirt
+      - ./data-x11ubt/var-run-libvirt:/var/run/libvirt
+      - ./data-x11ubt/etc-libvirt-qemu:/etc/libvirt/qemu
+      - /_ext:/_ext
+
+  x11ubt-virtmgr:
+    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-x11ubt2404
+    command: /bin/bash -c "exec /entry.sh"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "bash", "-c", "sv status |grep -v '+ +++ ' && exit 1 || exit 0 "]
+    shm_size: 1g
+    hostname: x11-ubuntu
+    privileged: true
+    network_mode: bridge #host bridge;
+    ports:
+      # - 8385:80
+      - 62022:62022
+      - 62081:62081
+      - 62089:62089
+    environment:
+      - VNC_OFFSET=62
+      - START_SESSION=${DESK:-openbox-session} #startfluxbox openbox-session xfce4-session
+      - L=zh_CN
+      - TZ=Asia/Shanghai
+    volumes: 
+      - /_ext:/_ext
+      - ./data-x11ubt/var-lib-libvirt:/var/lib/libvirt
+      - ./data-x11ubt/var-run-libvirt:/var/run/libvirt
