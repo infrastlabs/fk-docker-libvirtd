@@ -50,6 +50,46 @@ function init() {
 # virshInit 2>&1 |tee -a init.log
 init 2>&1 |tee -a init.log
 virter  -v
-cat supervisord.conf> /etc/supervisord.conf
-mkdir -p /var/log $cur/../log; rm -rf /var/log/supervisor; ln -s $cur/../log /var/log/supervisor
-exec /usr/bin/supervisord -c /etc/supervisord.conf
+# cat supervisord.conf> /etc/supervisord.conf
+# mkdir -p /var/log $cur/../log; rm -rf /var/log/supervisor; ln -s $cur/../log /var/log/supervisor
+# exec /usr/bin/supervisord -c /etc/supervisord.conf
+
+
+function rcmain(){
+  local one=$1; local cmd=$2
+  # chmod o+t > chmod 1755
+  mkdir -p /etc/perp/$one/; chmod 1755 /etc/perp/$one
+  touch /etc/perp/$one/rc.main; chmod +x /etc/perp/$one/rc.main
+  cat > /etc/perp/$one/rc.main <<EOF
+#!/bin/sh
+exec 2>&1
+TARGET=\${1}
+SVNAME=\${2}
+
+start() {
+    $cmd
+}
+
+reset() {
+    case \$3 in
+      'exit' )
+        echo "*** [\${SVNAME}] exited status \$4" ;;
+      'signal' )
+        echo "*** [\${SVNAME}] killed on signal \$5" ;;
+      * )
+        echo "*** [\${SVNAME}] stopped (\$3)" ;;
+    esac
+    exit 0
+}
+
+eval \${TARGET} "\$@"
+EOF
+}
+
+rcmain virtd "exec /usr/sbin/libvirtd"
+rcmain virtlockd "exec /usr/sbin/virtlockd"
+rcmain virtlogd "exec /usr/sbin/virtlogd"
+envcmd="export DISPLAY=:$VNC_OFFSET; export HOME=/home/headless"
+decmd="export USER=headless; export SHELL=/bin/bash; export TERM=xterm"
+rcmain virt-manager "bash /srv/local/libvirt/build/virtinit.sh; exec gosu headless bash -c \"$envcmd; $decmd; exec virt-manager --no-fork\""
+exec bash /entry.sh
