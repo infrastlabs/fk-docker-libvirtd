@@ -10,6 +10,10 @@ services:
     privileged: true
     network_mode: bridge #host bridge; non.host: avoid multi-inst-network-conflict
     working_dir: /srv/local/libvirt
+    # https://docs.docker.com/reference/compose-file/profiles/ tpl
+    # https://docs.docker.com/reference/cli/docker/compose/ env.COMPOSE_PROFILES
+    profiles:
+      - split
     ports:
       - 62122:60022
     # https://gitlab.com/libvirt/libvirt/-/issues/163
@@ -31,7 +35,7 @@ services:
 
   x11ubt-virtmgr:
     image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-x11ubt2404
-    command: /bin/bash -c "exec /entry.sh"
+    # command: /bin/bash -c "exec /entry.sh"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "bash", "-c", "sv status |grep -v '+ +++ ' && exit 1 || exit 0 "]
@@ -39,6 +43,8 @@ services:
     hostname: x11-ubuntu
     privileged: true
     network_mode: bridge #host bridge;
+    profiles:
+      - split
     ports:
       # - 8385:80
       - 62022:62022
@@ -53,3 +59,39 @@ services:
       - /_ext:/_ext
       - ./data-x11ubt/var-lib-libvirt:/var/lib/libvirt
       - ./data-x11ubt/var-run-libvirt:/var/run/libvirt
+
+  x11ubt-aio:
+    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-x11ubt2404
+    entrypoint: /bin/bash /srv/local/libvirt/build/entry-prex11.sh
+    restart: unless-stopped
+    privileged: true
+    network_mode: bridge #host bridge; non.host: avoid multi-inst-network-conflict
+    working_dir: /srv/local/libvirt
+    cgroup: host
+    profiles:
+      - default
+    ports:
+      # - 8385:80
+      # - 62122:60022
+      - 63022:62022
+      - 63081:62081
+      - 63089:62089
+    environment:
+      - VNC_OFFSET=63
+      - START_SESSION=${DESK:-openbox-session} #startfluxbox openbox-session xfce4-session
+      - L=zh_CN
+      - TZ=Asia/Shanghai
+      - SSH_PASS=${SSH_PASS:-headless}
+      - VNC_PASS=${VNC_PASS:-headless}
+      - VNC_PASS_RO=${VNC_PASS_RO:-View123}
+    tmpfs:
+      - /var/run
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - ./:/srv/local/libvirt
+      - ./data-x11ubtaio/var-lib-libvirt:/var/lib/libvirt
+      - ./data-x11ubtaio/var-run-libvirt:/var/run/libvirt
+      - ./data-x11ubtaio/etc-libvirt-qemu:/etc/libvirt/qemu
+      - /_ext:/_ext
