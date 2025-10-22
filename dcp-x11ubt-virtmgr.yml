@@ -12,8 +12,7 @@ services:
     working_dir: /srv/local/libvirt
     # https://docs.docker.com/reference/compose-file/profiles/ tpl
     # https://docs.docker.com/reference/cli/docker/compose/ env.COMPOSE_PROFILES
-    profiles:
-      - split
+    profiles: [split]
     ports:
       - 62122:60022
     # https://gitlab.com/libvirt/libvirt/-/issues/163
@@ -40,11 +39,10 @@ services:
     healthcheck:
       test: ["CMD", "bash", "-c", "sv status |grep -v '+ +++ ' && exit 1 || exit 0 "]
     shm_size: 1g
-    hostname: x11-ubuntu
+    hostname: x11-virtmgr
     privileged: true
     network_mode: bridge #host bridge;
-    profiles:
-      - split
+    profiles: [split]
     ports:
       # - 8385:80
       - 62022:62022
@@ -64,18 +62,22 @@ services:
     image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/docker-libvirtd:v2501-x11ubt2404
     entrypoint: /bin/bash /srv/local/libvirt/build/entry-prex11.sh
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "bash", "-c", "sv status |grep -v '+ +++ ' && exit 1 || exit 0 "]
+    shm_size: 1g
+    hostname: x11-virter
     privileged: true
-    network_mode: bridge #host bridge; non.host: avoid multi-inst-network-conflict
+    network_mode: ${NETWORK_MODE:-bridge} #host bridge; non.host: avoid multi-inst-network-conflict
     working_dir: /srv/local/libvirt
     cgroup: host
-    profiles:
-      - default
+    # profiles:
+    #   - default #dcp不带参:不会激活之
     ports:
       # - 8385:80
       # - 62122:60022
-      - 63022:62022
-      - 63081:62081
-      - 63089:62089
+      - 63022:63022
+      - 63081:63081
+      - 63089:63089
     environment:
       - VNC_OFFSET=63
       - START_SESSION=${DESK:-openbox-session} #startfluxbox openbox-session xfce4-session
